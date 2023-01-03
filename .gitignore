@@ -12,6 +12,9 @@
 /prisma/db.sqlite
 /prisma/db.sqlite-journal
 
+# csv data
+/csv
+
 # next.js
 /.next/
 /out/
