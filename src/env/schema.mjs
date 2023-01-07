@@ -16,6 +16,7 @@ export const serverSchema = z.object({
  * To expose them to the client, prefix them with `NEXT_PUBLIC_`.
  */
 export const clientSchema = z.object({
+  NEXT_PUBLIC_MML_API_KEY: z.string(),
 });
 
 /**
@@ -25,4 +26,5 @@ export const clientSchema = z.object({
  * @type {{ [k in keyof z.infer<typeof clientSchema>]: z.infer<typeof clientSchema>[k] | undefined }}
  */
 export const clientEnv = {
+  NEXT_PUBLIC_MML_API_KEY: process.env.NEXT_PUBLIC_MML_API_KEY,
 };
