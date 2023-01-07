@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --color-scrollbar-primary: rgb(101 164 187);
+    --color-scrollbar-secondary: rgb(21 94 117);
+  }
+}
+
+body {
+  @apply bg-slate-900 text-slate-300;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-scrollbar-primary)
+    var(--color-scrollbar-secondary);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--color-scrollbar-secondary);
+  border-radius: 0 5px 5px 0;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-scrollbar-primary);
+  border-radius: 14px;
+  border: 3px solid var(--color-scrollbar-secondary);
+}
