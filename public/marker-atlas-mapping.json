@@ -1,0 +1,9 @@
+{
+  "station": {
+    "x": 0,
+    "y": 0,
+    "width": 256,
+    "height": 256,
+    "anchorY": 256
+  }
+}

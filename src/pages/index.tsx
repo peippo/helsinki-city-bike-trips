@@ -4,6 +4,7 @@ import Link from "next/link";
 import { trpc } from "@utils/trpc";
 import { kebabCase } from "@utils/general";
 
+import Map from "@components/Map";
 import SidePanel from "@components/SidePanel";
 import BikeIcon from "@components/icons/BikeIcon";
 
@@ -18,6 +19,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen items-center justify-center">
+        <Map />
         <SidePanel>
           <table className="w-full">
             <thead>
