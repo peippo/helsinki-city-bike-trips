@@ -11,7 +11,6 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { mapStyle } from "@styles/map-style";
 
 import BikeIcon from "./icons/BikeIcon";
-import { kebabCase } from "@utils/general";
 
 const INITIAL_VIEW_STATE = {
   longitude: 24.9235379,
@@ -49,14 +48,12 @@ const Map = () => {
     getSize: (d) => d.capacity,
     onHover: (info) => setHoverInfo(info as PickingInfo),
     onClick: (info) => {
-      router.push(
-        `/stations/${info.object.stationId}-${kebabCase(info.object.name)}`
-      );
+      router.push(`/stations/${info.object.stationId}`);
     },
   });
 
   return (
-    <div>
+    <>
       <DeckGL
         initialViewState={INITIAL_VIEW_STATE}
         controller={true}
@@ -88,7 +85,7 @@ const Map = () => {
           </div>
         )}
       </DeckGL>
-    </div>
+    </>
   );
 };
 
