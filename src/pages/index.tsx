@@ -4,7 +4,7 @@ import Link from "next/link";
 import { trpc } from "@utils/trpc";
 
 import SidePanel from "@components/SidePanel";
-import BikeIcon from "@components/icons/BikeIcon";
+import { BikeIcon } from "@components/icons/Icons";
 
 const Home: NextPage = () => {
   const stations = trpc.station.getAll.useQuery();

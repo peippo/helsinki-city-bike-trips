@@ -10,7 +10,7 @@ import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { mapStyle } from "@styles/map-style";
 
-import BikeIcon from "./icons/BikeIcon";
+import { BikeIcon } from "./icons/Icons";
 
 const INITIAL_VIEW_STATE = {
   longitude: 24.9235379,
