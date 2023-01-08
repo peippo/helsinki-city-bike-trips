@@ -1,16 +1,19 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { trpc } from "@utils/trpc";
 import { useRouter } from "next/router";
 import DeckGL from "@deck.gl/react/typed";
-import { IconLayer } from "@deck.gl/layers/typed";
+import { IconLayer, ArcLayer } from "@deck.gl/layers/typed";
 import maplibregl from "maplibre-gl";
 import { Map as ReactMapGl } from "react-map-gl";
+import useSingleStation from "@hooks/useSingleStation";
 import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 import { mapStyle } from "@styles/map-style";
 
 import { BikeIcon } from "./icons/Icons";
+import { Station } from "@prisma/client";
+import Tooltip from "./Tooltip";
 
 const INITIAL_VIEW_STATE = {
   longitude: 24.9235379,
@@ -22,11 +25,14 @@ const INITIAL_VIEW_STATE = {
 
 const Map = () => {
   const stations = trpc.station.getAll.useQuery();
+  const { station: selectedStation, topDestinationsIds } = useSingleStation();
+
   const [hoverInfo, setHoverInfo] = useState<PickingInfo>();
   const router = useRouter();
 
-  const data = stations.data?.map((s) => {
+  const stationsData = stations.data?.map((s) => {
     return {
+      type: "station",
       coordinates: [s.longitude, s.latitude],
       capacity: s.capacity,
       name: s.name,
@@ -34,9 +40,9 @@ const Map = () => {
     };
   });
 
-  const stationsIconLayer = new IconLayer({
+  const stationsLayer = new IconLayer({
     id: "stations-icon-layer",
-    data: data,
+    data: stationsData,
     pickable: true,
     iconAtlas: "/marker-atlas.png",
     iconMapping: "/marker-atlas-mapping.json",
@@ -44,7 +50,15 @@ const Map = () => {
     sizeMinPixels: 20,
     autoHighlight: true,
     getPosition: (d) => d.coordinates,
-    getIcon: () => "station",
+    getIcon: (d) => {
+      if (d.stationId === selectedStation.data?.stationId) {
+        return "selectedStation";
+      } else if (topDestinationsIds.includes(d.stationId)) {
+        return "destinationStation";
+      } else {
+        return "station";
+      }
+    },
     getSize: (d) => d.capacity,
     onHover: (info) => setHoverInfo(info as PickingInfo),
     onClick: (info) => {
@@ -52,12 +66,59 @@ const Map = () => {
     },
   });
 
+  const destinationsData = useMemo(
+    () =>
+      topDestinationsIds.map((id) => {
+        if (!stations.data || !selectedStation.data) return;
+
+        const destinationStation = stations.data.find(
+          (station) => station.stationId === id
+        ) as Station;
+
+        return {
+          type: "destination",
+          from: {
+            name: selectedStation.data.name,
+            coordinates: [
+              selectedStation.data.longitude,
+              selectedStation.data.latitude,
+              1,
+            ],
+          },
+          to: {
+            name: destinationStation.name,
+            coordinates: [
+              destinationStation.longitude,
+              destinationStation.latitude,
+              1,
+            ],
+          },
+        };
+      }),
+    [selectedStation.data?.stationId]
+  );
+
+  const destinationsLayer = new ArcLayer({
+    id: "arc-layer",
+    data: destinationsData,
+    pickable: true,
+    getWidth: 5,
+    getPolygonOffset: () => [200, 0],
+    getSourcePosition: (d) => d.from.coordinates,
+    getTargetPosition: (d) => d.to.coordinates,
+    getSourceColor: () => [50, 140, 255],
+    getTargetColor: () => [200, 140, 255],
+    onHover: (info) => setHoverInfo(info as PickingInfo),
+  });
+
+  console.log(hoverInfo?.object);
+
   return (
     <>
       <DeckGL
         initialViewState={INITIAL_VIEW_STATE}
         controller={true}
-        layers={[stationsIconLayer]}
+        layers={[destinationsLayer, stationsLayer]}
         getCursor={({ isHovering }) => (isHovering ? "pointer" : "grab")}
       >
         <ReactMapGl
@@ -66,24 +127,7 @@ const Map = () => {
           mapLib={maplibregl}
           initialViewState={INITIAL_VIEW_STATE}
         />
-        {hoverInfo?.object && (
-          <div
-            className="z-1 pointer-events-none absolute -translate-x-1/2 -translate-y-[calc(100%+10px)] rounded-lg border-b-2 border-slate-900 bg-sky-800 px-3 py-2 text-center text-slate-300 shadow-lg"
-            style={{
-              left: hoverInfo.x,
-              top: hoverInfo.y,
-            }}
-          >
-            <h2 className="text-yellow-300">{hoverInfo.object.name}</h2>
-
-            <p className="m-0 flex items-center justify-center uppercase">
-              <span className="sr-only">Capacity: </span>
-              <strong>{hoverInfo.object.capacity}</strong>
-              <BikeIcon width={24} className="ml-2" />{" "}
-            </p>
-            <div className="absolute left-1/2 bottom-0 z-0 h-3 w-3 -translate-x-1/2 translate-y-1/2 rotate-45 transform border-r border-b border-slate-900 bg-sky-800"></div>
-          </div>
-        )}
+        {hoverInfo?.object && <Tooltip hoverInfo={hoverInfo} />}
       </DeckGL>
     </>
   );

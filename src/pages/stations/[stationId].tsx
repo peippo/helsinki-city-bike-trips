@@ -1,7 +1,5 @@
 import { type NextPage } from "next";
-import { useRouter } from "next/router";
 import Head from "next/head";
-import { trpc } from "@utils/trpc";
 
 import SidePanel from "@components/SidePanel";
 import {
@@ -11,17 +9,10 @@ import {
   DeparturesIcon,
 } from "@components/icons/Icons";
 import Link from "next/link";
+import useSingleStation from "@hooks/useSingleStation";
 
 const Station: NextPage = () => {
-  const router = useRouter();
-  const { stationId } = router.query;
-
-  const station = trpc.station.getSingle.useQuery(
-    {
-      stationId: parseInt(stationId as string),
-    },
-    { enabled: !!stationId }
-  );
+  const { station } = useSingleStation();
 
   return (
     <>
