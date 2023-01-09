@@ -31,7 +31,7 @@ const Home: NextPage = () => {
                 <td>
                   <Link
                     href={`/stations/${station.stationId}`}
-                    className="inline-flex justify-between border-b border-slate-600 text-sm hover:text-yellow-400"
+                    className="link"
                   >
                     <span>{station.name}</span>
                   </Link>

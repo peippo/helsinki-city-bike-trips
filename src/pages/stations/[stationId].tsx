@@ -24,9 +24,7 @@ const Station: NextPage = () => {
       <SidePanel width="wide">
         <Link className="group mb-3 inline-flex items-center" href="/">
           <BackIcon width={12} className="mr-2 text-yellow-500" />
-          <span className="border-b border-slate-600 group-hover:text-yellow-500">
-            All stations
-          </span>
+          <span className="group-link">All stations</span>
         </Link>
         {station.data && (
           <div className="flex flex-col">
