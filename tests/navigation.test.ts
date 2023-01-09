@@ -1,0 +1,39 @@
+import { afterAll, beforeAll, describe, test } from "vitest";
+import { preview } from "vite";
+import { chromium } from "playwright";
+import { expect } from "@playwright/test";
+import type { Browser, Page } from "playwright";
+import type { PreviewServer } from "vite";
+
+describe("Navigation", async () => {
+  let server: PreviewServer;
+  let browser: Browser;
+  let page: Page;
+
+  beforeAll(async () => {
+    server = await preview({ preview: { port: 3000 } });
+    browser = await chromium.launch();
+    page = await browser.newPage();
+  });
+
+  afterAll(async () => {
+    await browser.close();
+    await new Promise<void>((resolve, reject) => {
+      server.httpServer.close((error) => (error ? reject(error) : resolve()));
+    });
+  });
+
+  test("should open station page from stations list", async () => {
+    await page.goto("http://localhost:3000");
+    await page.getByRole("link", { name: "Kaivopuisto" }).click();
+
+    await expect(page).toHaveTitle("Kaivopuisto [1]");
+  });
+
+  test("should be able to return from station page", async () => {
+    await page.goto("http://localhost:3000/stations/1");
+    await page.getByRole("link", { name: "All stations" }).click();
+
+    await expect(page).toHaveURL("http://localhost:3000");
+  });
+});
