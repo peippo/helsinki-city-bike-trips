@@ -1,37 +1,77 @@
 import { useRouter } from "next/router";
 import { trpc } from "@utils/trpc";
+import { useMemo } from "react";
+import { getPercent } from "@utils/general";
+import type { Station } from "@prisma/client";
 
+/**
+ * Fetch single station details and top 5 departure destinations
+ */
 const useSingleStation = () => {
   const router = useRouter();
   const { stationId } = router.query;
-
-  const station = trpc.station.getSingle.useQuery(
+  const stations = trpc.station.getAll.useQuery();
+  const selectedStation = trpc.station.getSingle.useQuery(
     {
       stationId: parseInt(stationId as string),
     },
     { enabled: !!stationId }
   );
 
-  let topDestinationsIds = [];
+  const destinationsData = useMemo(() => {
+    if (!selectedStation.data) return [];
 
-  if (station.data) {
-    const destinations = station.data?.departures.reduce(
+    let topDestinations: number[][] = [];
+
+    const destinations = selectedStation.data?.departures.reduce(
       (acc, departure) =>
         acc.set(
           departure.arrivalStationId,
           (acc.get(departure.arrivalStationId) || 0) + 1
         ),
       new Map()
-    );
+    ) as Map<number, number>;
 
-    topDestinationsIds = Array.from(
+    topDestinations = Array.from(
       new Map([...destinations.entries()].sort((a, b) => b[1] - a[1]))
-    )
-      .slice(0, 5)
-      .map((t) => t[0]);
-  }
+    ).slice(0, 5);
 
-  return { station, topDestinationsIds };
+    return topDestinations.map(([id, tripCount]) => {
+      if (!stations.data || !selectedStation.data || !tripCount) return;
+
+      const destinationStation = stations.data.find(
+        (station) => station.stationId === id
+      ) as Station;
+
+      return {
+        type: "destination",
+        from: {
+          name: selectedStation.data.name,
+          coordinates: [
+            selectedStation.data.longitude,
+            selectedStation.data.latitude,
+            1,
+          ],
+        },
+        to: {
+          stationId: destinationStation.stationId,
+          name: destinationStation.name,
+          coordinates: [
+            destinationStation.longitude,
+            destinationStation.latitude,
+            1,
+          ],
+          tripCount: tripCount,
+          percentage: getPercent(
+            tripCount,
+            selectedStation.data.departures.length
+          ),
+        },
+      };
+    });
+  }, [selectedStation.data, stations.data]);
+
+  return { selectedStation, destinationsData };
 };
 
 export default useSingleStation;
