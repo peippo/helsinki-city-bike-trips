@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { trpc } from "@utils/trpc";
 import { useRouter } from "next/router";
 import DeckGL from "@deck.gl/react/typed";
@@ -12,18 +12,14 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { mapStyle } from "@styles/map-style";
 
 import Tooltip from "./Tooltip";
-
-const INITIAL_VIEW_STATE = {
-  longitude: 24.9235379,
-  latitude: 60.17061,
-  zoom: 12,
-  pitch: 50,
-  bearing: 0,
-};
+import useMapViewState from "@hooks/useMapViewState";
 
 const Map = () => {
   const stations = trpc.station.getAll.useQuery();
   const { selectedStation, destinationsData } = useSingleStation();
+  const { viewState, handleViewStateChange } = useMapViewState(
+    selectedStation.data
+  );
 
   const [hoverInfo, setHoverInfo] = useState<PickingInfo>();
   const router = useRouter();
@@ -85,7 +81,8 @@ const Map = () => {
   return (
     <>
       <DeckGL
-        initialViewState={INITIAL_VIEW_STATE}
+        viewState={viewState}
+        onViewStateChange={handleViewStateChange}
         controller={true}
         layers={[destinationsLayer, stationsLayer]}
         getCursor={({ isHovering }) => (isHovering ? "pointer" : "grab")}
@@ -94,7 +91,6 @@ const Map = () => {
           // @ts-ignore
           mapStyle={mapStyle}
           mapLib={maplibregl}
-          initialViewState={INITIAL_VIEW_STATE}
         />
         {hoverInfo?.object && <Tooltip hoverInfo={hoverInfo} />}
       </DeckGL>

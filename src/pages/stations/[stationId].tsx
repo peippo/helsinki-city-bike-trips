@@ -59,7 +59,7 @@ const Station: NextPage = () => {
                 Top departure destinations
               </h2>
               {destinationsData.map((d) => (
-                <ul className="mt-2">
+                <ul className="mt-2" key={d?.to.stationId}>
                   <li className="flex items-center justify-between gap-3">
                     <Link
                       className="link"
