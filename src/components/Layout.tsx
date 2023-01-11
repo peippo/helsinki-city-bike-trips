@@ -1,6 +1,7 @@
 import Head from "next/head";
 
 import Map from "@components/Map";
+import MainNav from "./MainNav";
 import classNames from "classnames";
 import { NextFont } from "@next/font/dist/types";
 
@@ -23,6 +24,7 @@ const Layout: React.FC<Props> = ({ children, font }) => {
           font.className
         )}
       >
+        <MainNav />
         {children}
         <Map />
       </main>
