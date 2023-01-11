@@ -36,4 +36,19 @@ describe("Navigation", async () => {
 
     await expect(page).toHaveURL("http://localhost:3000");
   });
+
+  test("stations list can be filtered", async () => {
+    await page.goto("http://localhost:3000");
+    await page.getByLabel("Search stations").fill("Kaivo");
+    await expect(page.locator(".sidepanel tbody span")).toContainText([
+      "Kaivonkatsojanpuisto",
+      "Kaivopuisto",
+    ]);
+  });
+
+  test("stations list search shows no results message", async () => {
+    await page.goto("http://localhost:3000");
+    await page.getByLabel("Search stations").fill("Lorem ipsum");
+    await expect(page.locator(".sidepanel")).toContainText("No stations found");
+  });
 });
