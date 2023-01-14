@@ -8,24 +8,22 @@ import maplibregl from "maplibre-gl";
 import { Map as ReactMapGl } from "react-map-gl";
 import useSingleStation from "@hooks/useSingleStation";
 import useMapViewState from "@hooks/useMapViewState";
+import useAutoViewChange from "@hooks/useAutoViewChange";
 import { STATION } from "@constants/index";
+import { mapStyle } from "@styles/map-style";
 import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
 import type { StationPoint } from "customTypes";
-
 import "maplibre-gl/dist/maplibre-gl.css";
-import { mapStyle } from "@styles/map-style";
 
 import Tooltip from "./Tooltip";
 
 const Map = () => {
   const stations = trpc.station.getAll.useQuery();
-  const { selectedStation, destinationsData } = useSingleStation();
-  const { viewState, handleViewStateChange } = useMapViewState(
-    selectedStation.data
-  );
-
   const [hoverInfo, setHoverInfo] = useState<PickingInfo>();
+  const { selectedStation, destinationsData } = useSingleStation();
+  const { viewState, handleViewStateChange } = useMapViewState();
   const router = useRouter();
+  useAutoViewChange();
 
   const stationsData: StationPoint[] | undefined = stations.data?.map((s) => {
     return {

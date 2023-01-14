@@ -1,7 +1,5 @@
-import { useEffect } from "react";
 import { atom, useAtom } from "jotai";
 import { FlyToInterpolator } from "@deck.gl/core/typed";
-import { Station } from "@prisma/client";
 
 const LONGITUDE_RANGE: readonly [number, number] = [24.65, 25.19];
 const LATITUDE_RANGE: readonly [number, number] = [60.1, 60.3];
@@ -18,7 +16,10 @@ const viewAtom = atom({
   transitionInterpolator: new FlyToInterpolator(),
 });
 
-const useMapViewState = (selectedStation: Station | undefined | null) => {
+/**
+ * Manage & limit map view state
+ */
+const useMapViewState = () => {
   const [viewState, setViewState] = useAtom(viewAtom);
 
   const handleViewStateChange = (event: any) => {
@@ -36,21 +37,6 @@ const useMapViewState = (selectedStation: Station | undefined | null) => {
 
     setViewState(newState);
   };
-
-  const flyTo = (longitude: number, latitude: number) => {
-    setViewState({
-      ...viewState,
-      longitude,
-      latitude,
-      transitionDuration: 400,
-    });
-  };
-
-  useEffect(() => {
-    if (!selectedStation) return;
-
-    flyTo(selectedStation.longitude, selectedStation.latitude);
-  }, [selectedStation]);
 
   return { viewState, setViewState, handleViewStateChange };
 };
