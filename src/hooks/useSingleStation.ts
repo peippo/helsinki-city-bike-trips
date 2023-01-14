@@ -1,9 +1,10 @@
+import { useMemo } from "react";
 import { useRouter } from "next/router";
 import { trpc } from "@utils/trpc";
-import { useMemo } from "react";
 import { getPercent } from "@utils/general";
-import type { Station } from "@prisma/client";
 import { DESTINATION } from "@constants/index";
+import type { Station } from "@prisma/client";
+import type { DestinationPoint } from "customTypes";
 
 /**
  * Fetch single station details and top 5 departure destinations
@@ -19,7 +20,7 @@ const useSingleStation = () => {
     { enabled: !!stationId }
   );
 
-  const destinationsData = useMemo(() => {
+  const destinationsData: Array<DestinationPoint | undefined> = useMemo(() => {
     if (!selectedStation.data) return [];
 
     let topDestinations: number[][] = [];

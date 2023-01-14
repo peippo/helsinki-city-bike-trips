@@ -51,6 +51,7 @@ const MainNav = () => {
         <NavLink path="/" pathMatches={["/", "/stations/[stationId]"]}>
           Stations
         </NavLink>
+        <NavLink path="/traffic">Traffic</NavLink>
       </nav>
     </header>
   );
