@@ -3,6 +3,7 @@ import { trpc } from "@utils/trpc";
 import { useMemo } from "react";
 import { getPercent } from "@utils/general";
 import type { Station } from "@prisma/client";
+import { DESTINATION } from "@constants/index";
 
 /**
  * Fetch single station details and top 5 departure destinations
@@ -44,7 +45,7 @@ const useSingleStation = () => {
       ) as Station;
 
       return {
-        type: "destination",
+        type: DESTINATION,
         from: {
           name: selectedStation.data.name,
           coordinates: [

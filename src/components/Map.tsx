@@ -6,6 +6,7 @@ import { IconLayer, ArcLayer } from "@deck.gl/layers/typed";
 import maplibregl from "maplibre-gl";
 import { Map as ReactMapGl } from "react-map-gl";
 import useSingleStation from "@hooks/useSingleStation";
+import { STATION } from "@constants/index";
 import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
 
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -26,7 +27,7 @@ const Map = () => {
 
   const stationsData = stations.data?.map((s) => {
     return {
-      type: "station",
+      type: STATION,
       coordinates: [s.longitude, s.latitude],
       capacity: s.capacity,
       name: s.name,
