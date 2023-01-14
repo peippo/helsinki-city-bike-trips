@@ -18,7 +18,9 @@ const Station: NextPage = () => {
     <>
       <Head>
         <title>
-          {`${selectedStation.data?.name} [${selectedStation.data?.stationId}]`}
+          {selectedStation.data
+            ? `${selectedStation.data.name} [${selectedStation.data.stationId}]`
+            : "Loading..."}
         </title>
       </Head>
       <SidePanel width="wide">
