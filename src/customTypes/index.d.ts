@@ -1,4 +1,4 @@
-import { STATION, TRAFFIC } from "@constants/index";
+import type { STATION, TRAFFIC } from "@constants/index";
 
 type PointType = {
   type: STATION | TRAFFIC;

@@ -3,7 +3,7 @@ import Head from "next/head";
 import Map from "@components/Map";
 import MainNav from "./MainNav";
 import classNames from "classnames";
-import { NextFont } from "@next/font/dist/types";
+import type { NextFont } from "@next/font/dist/types";
 
 type Props = {
   children: React.ReactNode;

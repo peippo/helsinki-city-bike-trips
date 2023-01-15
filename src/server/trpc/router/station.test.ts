@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { createContextInner } from "../context";
-import { AppRouter, appRouter } from "./_app";
+import { type AppRouter, appRouter } from "./_app";
 import type { inferProcedureInput } from "@trpc/server";
 
 describe("Station router", () => {

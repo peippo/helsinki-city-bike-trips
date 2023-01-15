@@ -1,14 +1,14 @@
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
 import DeckGL from "@deck.gl/react/typed";
-import { IconLayer, ArcLayer } from "@deck.gl/layers/typed";
-import { HexagonLayer } from "@deck.gl/aggregation-layers/typed";
 import maplibregl from "maplibre-gl";
 import { Map as ReactMapGl } from "react-map-gl";
 import useMapViewState from "@hooks/useMapViewState";
 import useAutoViewChange from "@hooks/useAutoViewChange";
 import useMapLayers, { hoverInfoAtom } from "@hooks/useMapLayers";
 import { mapStyle } from "@styles/map-style";
+import type { IconLayer, ArcLayer } from "@deck.gl/layers/typed";
+import type { HexagonLayer } from "@deck.gl/aggregation-layers/typed";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 import Tooltip from "./Tooltip";
@@ -43,11 +43,7 @@ const Map = () => {
         layers={activeLayers}
         getCursor={({ isHovering }) => (isHovering ? "pointer" : "grab")}
       >
-        <ReactMapGl
-          // @ts-ignore
-          mapStyle={mapStyle}
-          mapLib={maplibregl}
-        />
+        <ReactMapGl mapStyle={mapStyle} mapLib={maplibregl} />
         {hoverInfo?.object && <Tooltip hoverInfo={hoverInfo} />}
       </DeckGL>
     </>

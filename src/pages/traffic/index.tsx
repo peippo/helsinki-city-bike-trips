@@ -5,8 +5,8 @@ import { trafficZoneAtom } from "@hooks/useMapLayers";
 
 import SidePanel from "@components/SidePanel";
 import Link from "next/link";
-import { StationPoint } from "customTypes";
 import { ArrivalsIcon, DeparturesIcon } from "@components/icons/Icons";
+import type { StationPoint } from "customTypes";
 
 const Station: NextPage = () => {
   const [trafficZone] = useAtom(trafficZoneAtom);

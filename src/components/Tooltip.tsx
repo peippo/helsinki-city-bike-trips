@@ -1,7 +1,7 @@
 import React from "react";
 import useCurrentMode from "@hooks/useMapMode";
-import { StationPoint } from "customTypes";
 import { STATION, TRAFFIC, DESTINATION } from "@constants/index";
+import type { StationPoint } from "customTypes";
 import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
 
 import {

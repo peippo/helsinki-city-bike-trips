@@ -3,9 +3,9 @@ import { atom, useAtom } from "jotai";
 import { IconLayer, ArcLayer } from "@deck.gl/layers/typed";
 import { HexagonLayer } from "@deck.gl/aggregation-layers/typed";
 import useSingleStation from "@hooks/useSingleStation";
-import { StationPoint } from "customTypes";
 import { useRouter } from "next/router";
 import { STATION } from "@constants/index";
+import type { StationPoint } from "customTypes";
 import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
 
 export const hoverInfoAtom = atom<PickingInfo | undefined>(undefined);
@@ -98,13 +98,11 @@ const useMapLayers = () => {
     },
     onHover: (info) => setHoverInfo(info as PickingInfo),
     // FIXME: typings
-    // @ts-ignore
     getColorValue: (points) =>
       points.reduce(
         (sum: number, p: StationPoint) => (sum += p.arrivals + p.departures),
         0
       ) / points.length,
-    // @ts-ignore
     getElevationValue: (points) =>
       points.reduce(
         (sum: number, p: StationPoint) => (sum += p.arrivals + p.departures),

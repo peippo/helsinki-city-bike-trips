@@ -9,30 +9,30 @@ import { TRAFFIC } from "@constants/index";
  */
 const useAutoViewChange = () => {
   const { selectedStation } = useSingleStation();
-  const { viewState, setViewState } = useMapViewState();
+  const { setViewState } = useMapViewState();
   const mode = useMapMode();
 
-  const flyTo = (longitude: number, latitude: number) => {
-    setViewState({
-      ...viewState,
-      longitude,
-      latitude,
-      transitionDuration: 400,
-      zoom: viewState.zoom < 12 ? 13 : viewState.zoom,
-    });
-  };
-
-  const zoomTo = (zoom: number) => {
-    setViewState({
-      ...viewState,
-      zoom: zoom,
-      pitch: 50,
-      bearing: 0,
-      transitionDuration: 600,
-    });
-  };
-
   useEffect(() => {
+    const flyTo = (longitude: number, latitude: number) => {
+      setViewState((state) => ({
+        ...state,
+        longitude,
+        latitude,
+        transitionDuration: 400,
+        zoom: state.zoom < 12 ? 13 : state.zoom,
+      }));
+    };
+
+    const zoomTo = (zoom: number) => {
+      setViewState((state) => ({
+        ...state,
+        zoom: zoom,
+        pitch: 50,
+        bearing: 0,
+        transitionDuration: 600,
+      }));
+    };
+
     if (selectedStation.data) {
       flyTo(selectedStation.data.longitude, selectedStation.data.latitude);
     }
@@ -40,7 +40,7 @@ const useAutoViewChange = () => {
     if (mode === TRAFFIC) {
       zoomTo(11);
     }
-  }, [selectedStation.data, mode]);
+  }, [selectedStation.data, mode, setViewState]);
 };
 
 export default useAutoViewChange;
