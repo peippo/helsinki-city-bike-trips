@@ -9,11 +9,13 @@ import { STATION } from "@constants/index";
 import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
 
 export const hoverInfoAtom = atom<PickingInfo | undefined>(undefined);
+export const trafficZoneAtom = atom<PickingInfo | undefined>(undefined);
 
 const useMapLayers = () => {
   const stations = trpc.station.getAll.useQuery();
   const { selectedStation, destinationsData } = useSingleStation();
-  const [_, setHoverInfo] = useAtom(hoverInfoAtom);
+  const [, setHoverInfo] = useAtom(hoverInfoAtom);
+  const [, setTrafficZone] = useAtom(trafficZoneAtom);
   const router = useRouter();
 
   const stationsData: StationPoint[] | undefined = stations.data?.map((s) => {
@@ -91,6 +93,9 @@ const useMapLayers = () => {
     autoHighlight: true,
     getColorWeight: (point) => point.arrivals + point.departures,
     getPosition: (d) => d.coordinates,
+    onClick: (info) => {
+      setTrafficZone(info as PickingInfo);
+    },
     onHover: (info) => setHoverInfo(info as PickingInfo),
     // FIXME: typings
     // @ts-ignore
