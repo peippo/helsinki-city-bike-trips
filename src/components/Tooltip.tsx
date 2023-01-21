@@ -58,9 +58,9 @@ const Tooltip: React.FC<Props> = ({ hoverInfo }) => {
       {isDestination && (
         <>
           <div className="flex items-center gap-2 text-sm">
-            <span>{hoverInfo.object.from.name}</span>
+            <span>{hoverInfo.object.departure.name}</span>
             <ForwardIcon width={15} className="text-yellow-500" />
-            <span>{hoverInfo.object.to.name}</span>
+            <span>{hoverInfo.object.arrival.name}</span>
           </div>
         </>
       )}

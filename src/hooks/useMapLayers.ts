@@ -7,15 +7,17 @@ import { useRouter } from "next/router";
 import { STATION } from "@constants/index";
 import type { StationPoint } from "customTypes";
 import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
+import { trafficModeAtom } from "@pages/stations/[stationId]";
 
 export const hoverInfoAtom = atom<PickingInfo | undefined>(undefined);
 export const trafficZoneAtom = atom<PickingInfo | undefined>(undefined);
 
 const useMapLayers = () => {
   const stations = trpc.station.getAll.useQuery();
-  const { selectedStation, destinationsData } = useSingleStation();
+  const { selectedStation, trafficData } = useSingleStation();
   const [, setHoverInfo] = useAtom(hoverInfoAtom);
   const [, setTrafficZone] = useAtom(trafficZoneAtom);
+  const [trafficMode] = useAtom(trafficModeAtom);
   const router = useRouter();
 
   const stationsData: StationPoint[] | undefined = stations.data?.map((s) => {
@@ -44,11 +46,17 @@ const useMapLayers = () => {
       if (d.stationId === selectedStation.data?.stationId) {
         return "selectedStation";
       } else if (
-        destinationsData.some(
-          (destination) => destination?.to.stationId === d.stationId
+        trafficData[trafficMode]?.some(
+          (destination) => destination?.arrival.stationId === d.stationId
         )
       ) {
-        return "destinationStation";
+        return "departureStation";
+      } else if (
+        trafficData[trafficMode]?.some(
+          (destination) => destination?.departure.stationId === d.stationId
+        )
+      ) {
+        return "arrivalStation";
       } else {
         return "station";
       }
@@ -62,12 +70,12 @@ const useMapLayers = () => {
 
   const destinationsLayer = new ArcLayer({
     id: "arc-layer",
-    data: destinationsData,
+    data: trafficData[trafficMode],
     pickable: true,
     getWidth: 5,
     getPolygonOffset: () => [200, 0],
-    getSourcePosition: (d) => d.from.coordinates,
-    getTargetPosition: (d) => d.to.coordinates,
+    getSourcePosition: (d) => d.departure.coordinates,
+    getTargetPosition: (d) => d.arrival.coordinates,
     getSourceColor: () => [50, 140, 255],
     getTargetColor: () => [200, 140, 255],
     onHover: (info) => setHoverInfo(info as PickingInfo),

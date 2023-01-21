@@ -4,6 +4,11 @@ type PointType = {
   type: STATION | TRAFFIC;
 };
 
+export type TrafficData = {
+  arrival: Array<RoutePoints | undefined>;
+  departure: Array<RoutePoints | undefined>;
+};
+
 export type StationData = {
   coordinates: number[];
   capacity: number;
@@ -13,19 +18,20 @@ export type StationData = {
   departures: number;
 };
 
-export type DestinationData = {
-  from: {
-    name: string;
-    coordinates: [number, number, number];
-  };
-  to: {
+export type RouteData = {
+  departure: {
     stationId: number;
     name: string;
     coordinates: [number, number, number];
-    tripCount: number;
-    percentage: string;
   };
+  arrival: {
+    stationId: number;
+    name: string;
+    coordinates: [number, number, number];
+  };
+  tripCount: number;
+  percentage: string;
 };
 
 type StationPoint = StationData & PointType;
-type DestinationPoint = DestinationData & PointType;
+type RoutePoints = RouteData & PointType;

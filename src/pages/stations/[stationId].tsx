@@ -1,5 +1,9 @@
 import { type NextPage } from "next";
 import Head from "next/head";
+import Link from "next/link";
+import { atom, useAtom } from "jotai";
+import useSingleStation from "@hooks/useSingleStation";
+import { TrafficModes } from "customTypes/enums";
 
 import SidePanel from "@components/SidePanel";
 import {
@@ -8,11 +12,13 @@ import {
   BikeIcon,
   DeparturesIcon,
 } from "@components/icons/Icons";
-import Link from "next/link";
-import useSingleStation from "@hooks/useSingleStation";
+import classNames from "classnames";
+
+export const trafficModeAtom = atom<TrafficModes>(TrafficModes.Arrival);
 
 const Station: NextPage = () => {
-  const { selectedStation, destinationsData } = useSingleStation();
+  const { selectedStation, trafficData } = useSingleStation();
+  const [trafficMode, setTrafficMode] = useAtom(trafficModeAtom);
 
   return (
     <>
@@ -46,42 +52,88 @@ const Station: NextPage = () => {
               <BikeIcon width={24} className="mr-2 text-yellow-500" />
               <p>Capacity {selectedStation.data.capacity} bikes</p>
             </div>
-            <div className="flex items-center justify-center border-t border-b border-cyan-800">
-              <div className="flex flex-grow justify-center px-2 py-3">
+            <div className="relative flex items-center justify-center border-t border-b border-cyan-800">
+              <button
+                onClick={() => setTrafficMode(TrafficModes.Arrival)}
+                className={classNames(
+                  "flex flex-grow basis-1/2 items-center justify-center border-b-4 border-cyan-800 px-2 py-3 text-sm",
+                  trafficMode === TrafficModes.Arrival
+                    ? "border-b-yellow-500 bg-gradient-to-t from-yellow-500/25 via-transparent to-transparent"
+                    : "from-cyan-700/25 via-transparent to-transparent hover:border-b-cyan-700 hover:bg-gradient-to-t"
+                )}
+              >
                 <ArrivalsIcon width={22} className="mr-3 text-yellow-500" />
                 <p>{selectedStation.data.arrivals.length} arrivals</p>
-              </div>
-              <div className="flex flex-grow items-center justify-center border-l border-cyan-800 px-2 py-3">
+              </button>
+              <button
+                onClick={() => setTrafficMode(TrafficModes.Departure)}
+                className={classNames(
+                  "flex basis-1/2 items-center justify-center border-b-4 border-l border-cyan-800 px-2 py-3 text-sm",
+                  trafficMode === TrafficModes.Departure
+                    ? "border-b-yellow-500 bg-gradient-to-t from-yellow-500/25 via-transparent to-transparent"
+                    : "from-cyan-700/25 via-transparent to-transparent hover:border-b-cyan-700 hover:bg-gradient-to-t"
+                )}
+              >
                 <DeparturesIcon width={22} className="mr-3 text-yellow-500" />
                 <p>{selectedStation.data.departures.length} departures</p>
-              </div>
+              </button>
+              <div
+                className={classNames(
+                  "absolute bottom-0 translate-y-full border-x-8 border-t-8 border-b-0 border-x-transparent border-t-yellow-500",
+                  trafficMode === TrafficModes.Arrival ? "left-1/4" : "left-3/4"
+                )}
+              ></div>
             </div>
             <div className="flex flex-col">
               <h2 className="mt-6 mb-2 text-lg text-slate-400">
-                Top departure destinations
+                Top {trafficMode} stations
               </h2>
-              {destinationsData.map((d) => (
-                <ul className="mt-2" key={d?.to.stationId}>
-                  <li className="flex items-center justify-between gap-3">
-                    <Link
-                      className="link"
-                      href={`/stations/${d?.to.stationId}`}
+              {trafficData[trafficMode].map(
+                (station) =>
+                  station && (
+                    <ul
+                      className="mt-2"
+                      key={
+                        station[
+                          trafficMode === TrafficModes.Arrival
+                            ? "departure"
+                            : "arrival"
+                        ]?.stationId
+                      }
                     >
-                      {d?.to.name}
-                    </Link>{" "}
-                    <div className="relative h-4 w-1/3 rounded-sm bg-slate-800 text-xs">
-                      <div
-                        className="mx-1 mt-1 h-2 rounded-sm bg-purple-400"
-                        style={{ width: `${d?.to.percentage}%` }}
-                      ></div>
-                      <span className="sr-only">Percentage of trips: </span>
-                      <span className="absolute right-1 top-1/2 -translate-y-1/2 text-slate-400">
-                        {d?.to.percentage}%
-                      </span>
-                    </div>
-                  </li>
-                </ul>
-              ))}
+                      <li className="flex items-center justify-between gap-3">
+                        <Link
+                          className="link"
+                          href={`/stations/${
+                            station[
+                              trafficMode === TrafficModes.Arrival
+                                ? "departure"
+                                : "arrival"
+                            ]?.stationId
+                          }`}
+                        >
+                          {
+                            station[
+                              trafficMode === TrafficModes.Arrival
+                                ? "departure"
+                                : "arrival"
+                            ]?.name
+                          }
+                        </Link>{" "}
+                        <div className="relative h-5 w-1/3 rounded-sm bg-slate-800 p-1 text-xs">
+                          <div
+                            className="h-3 rounded-sm bg-purple-400"
+                            style={{ width: `${station?.percentage}%` }}
+                          ></div>
+                          <span className="sr-only">Percentage of trips: </span>
+                          <span className="absolute right-1 top-1/2 -translate-y-1/2 pr-1 text-slate-400 mix-blend-difference">
+                            {station?.percentage}%
+                          </span>
+                        </div>
+                      </li>
+                    </ul>
+                  )
+              )}
             </div>
           </div>
         )}

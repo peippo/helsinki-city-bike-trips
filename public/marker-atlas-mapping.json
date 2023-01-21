@@ -13,8 +13,15 @@
     "height": 256,
     "anchorY": 256
   },
-  "destinationStation": {
+  "departureStation": {
     "x": 512,
+    "y": 0,
+    "width": 256,
+    "height": 256,
+    "anchorY": 256
+  },
+  "arrivalStation": {
+    "x": 768,
     "y": 0,
     "width": 256,
     "height": 256,
