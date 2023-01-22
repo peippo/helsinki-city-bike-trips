@@ -2,7 +2,7 @@ import React from "react";
 
 interface IconProps {
   width: number;
-  className: string;
+  className?: string;
 }
 
 interface IconBaseProps extends IconProps {
