@@ -98,7 +98,7 @@ const Station: NextPage = () => {
                           trafficMode === TrafficModes.Arrival
                             ? "departure"
                             : "arrival"
-                        ]?.stationId
+                        ].stationId
                       }
                     >
                       <li className="flex items-center justify-between gap-3">
@@ -109,7 +109,7 @@ const Station: NextPage = () => {
                               trafficMode === TrafficModes.Arrival
                                 ? "departure"
                                 : "arrival"
-                            ]?.stationId
+                            ].stationId
                           }`}
                         >
                           {
@@ -117,17 +117,19 @@ const Station: NextPage = () => {
                               trafficMode === TrafficModes.Arrival
                                 ? "departure"
                                 : "arrival"
-                            ]?.name
+                            ].name
                           }
                         </Link>{" "}
                         <div className="relative h-5 w-1/3 rounded-sm bg-slate-800 p-1 text-xs">
                           <div
                             className="h-3 rounded-sm bg-purple-400"
-                            style={{ width: `${station?.percentage}%` }}
+                            style={{ width: `${station.journeyPercentage}%` }}
                           ></div>
-                          <span className="sr-only">Percentage of trips: </span>
+                          <span className="sr-only">
+                            Percentage of journeys:{" "}
+                          </span>
                           <span className="absolute right-1 top-1/2 -translate-y-1/2 pr-1 text-slate-400 mix-blend-difference">
-                            {station?.percentage}%
+                            {station.journeyPercentage}%
                           </span>
                         </div>
                       </li>

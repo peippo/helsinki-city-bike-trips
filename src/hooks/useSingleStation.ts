@@ -26,40 +26,36 @@ const useSingleStation = () => {
     if (!selectedStation.data) return { arrival: [], departure: [] };
 
     // Top departure stations
-    let topDepartures: number[][] = [];
-
-    const departures = selectedStation.data?.departures.reduce(
-      (acc, departure) =>
-        acc.set(
+    const departureCounts = selectedStation.data.departures.reduce(
+      (stationList, departure) =>
+        stationList.set(
           departure.arrivalStationId,
-          (acc.get(departure.arrivalStationId) || 0) + 1
+          (stationList.get(departure.arrivalStationId) || 0) + 1
         ),
       new Map()
-    ) as Map<number, number>;
+    );
 
-    topDepartures = Array.from(
-      new Map([...departures.entries()].sort((a, b) => b[1] - a[1]))
+    const sortedDepartures = Array.from(
+      new Map([...departureCounts.entries()].sort((a, b) => b[1] - a[1]))
     ).slice(0, 5);
 
     // Top arrival stations
-    let topArrivals: number[][] = [];
-
-    const arrivals = selectedStation.data?.arrivals.reduce(
-      (acc, departure) =>
-        acc.set(
-          departure.departureStationId,
-          (acc.get(departure.departureStationId) || 0) + 1
+    const arrivals = selectedStation.data.arrivals.reduce(
+      (stationList, arrival) =>
+        stationList.set(
+          arrival.departureStationId,
+          (stationList.get(arrival.departureStationId) || 0) + 1
         ),
       new Map()
-    ) as Map<number, number>;
+    );
 
-    topArrivals = Array.from(
+    const sortedArrivals = Array.from(
       new Map([...arrivals.entries()].sort((a, b) => b[1] - a[1]))
     ).slice(0, 5);
 
     return {
-      arrival: topArrivals.map(([id, tripCount]) => {
-        if (!stations.data || !selectedStation.data || !tripCount) return;
+      arrival: sortedArrivals.map(([id, journeyCount]) => {
+        if (!stations.data || !selectedStation.data || !journeyCount) return;
 
         const arrivalStation = stations.data.find(
           (station) => station.stationId === id
@@ -81,18 +77,18 @@ const useSingleStation = () => {
               1,
             ],
           },
-          tripCount: tripCount,
-          percentage: getPercent(
-            tripCount,
+          journeyCount: journeyCount,
+          journeyPercentage: getPercent(
+            journeyCount,
             selectedStation.data.arrivals.length
           ),
         };
       }),
-      departure: topDepartures.map(([id, tripCount]) => {
-        if (!stations.data || !selectedStation.data || !tripCount) return;
+      departure: sortedDepartures.map(([stationId, journeyCount]) => {
+        if (!stations.data || !selectedStation.data || !journeyCount) return;
 
         const destinationStation = stations.data.find(
-          (station) => station.stationId === id
+          (station) => station.stationId === stationId
         ) as Station;
 
         return {
@@ -115,9 +111,9 @@ const useSingleStation = () => {
               1,
             ],
           },
-          tripCount: tripCount,
-          percentage: getPercent(
-            tripCount,
+          journeyCount: journeyCount,
+          journeyPercentage: getPercent(
+            journeyCount,
             selectedStation.data.departures.length
           ),
         };
