@@ -4,6 +4,7 @@ import Link from "next/link";
 import { atom, useAtom } from "jotai";
 import useSingleStation from "@hooks/useSingleStation";
 import { TrafficModes } from "customTypes/enums";
+import { mapHoverAtom } from "@hooks/useMapLayers";
 
 import SidePanel from "@components/SidePanel";
 import {
@@ -21,6 +22,7 @@ export const trafficModeAtom = atom<TrafficModes>(TrafficModes.Arrival);
 const Station: NextPage = () => {
   const { selectedStation, trafficData } = useSingleStation();
   const [trafficMode, setTrafficMode] = useAtom(trafficModeAtom);
+  const [, setHoverId] = useAtom(mapHoverAtom);
 
   return (
     <>
@@ -141,6 +143,16 @@ const Station: NextPage = () => {
                           <li className="flex items-center justify-between gap-3">
                             <Link
                               className="link"
+                              onMouseEnter={() =>
+                                setHoverId(
+                                  station[
+                                    trafficMode === TrafficModes.Arrival
+                                      ? "departure"
+                                      : "arrival"
+                                  ].stationId
+                                )
+                              }
+                              onMouseLeave={() => setHoverId(null)}
                               href={`/stations/${
                                 station[
                                   trafficMode === TrafficModes.Arrival

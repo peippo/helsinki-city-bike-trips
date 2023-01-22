@@ -11,6 +11,7 @@ import { trafficModeAtom } from "@pages/stations/[stationId]";
 
 export const hoverInfoAtom = atom<PickingInfo | undefined>(undefined);
 export const trafficZoneAtom = atom<PickingInfo | undefined>(undefined);
+export const mapHoverAtom = atom<number | null>(null);
 
 const useMapLayers = () => {
   const stations = trpc.station.getAll.useQuery();
@@ -18,6 +19,7 @@ const useMapLayers = () => {
   const [, setHoverInfo] = useAtom(hoverInfoAtom);
   const [, setTrafficZone] = useAtom(trafficZoneAtom);
   const [trafficMode] = useAtom(trafficModeAtom);
+  const [hoverId] = useAtom(mapHoverAtom);
   const router = useRouter();
 
   const stationsData: StationPoint[] | undefined = stations.data?.map((s) => {
@@ -41,6 +43,9 @@ const useMapLayers = () => {
     sizeScale: 1,
     sizeMinPixels: 20,
     autoHighlight: true,
+    highlightedObjectIndex: stationsData?.findIndex(
+      (station) => station.stationId === hoverId
+    ),
     getPosition: (d) => d.coordinates,
     getIcon: (d) => {
       if (selectedStation.data) {

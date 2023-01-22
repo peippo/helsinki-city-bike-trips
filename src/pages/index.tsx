@@ -3,6 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { trpc } from "@utils/trpc";
 import { useAtom } from "jotai";
+import { mapHoverAtom } from "@hooks/useMapLayers";
 
 import { searchValueAtom } from "@components/StationSearch";
 import SidePanel from "@components/SidePanel";
@@ -12,6 +13,7 @@ import StationSearch from "@components/StationSearch";
 const Home: NextPage = () => {
   const { data: stations, status } = trpc.station.getAll.useQuery();
 
+  const [, setHoverId] = useAtom(mapHoverAtom);
   const [searchValue] = useAtom(searchValueAtom);
   const filteredStations = stations?.filter((station) =>
     station.name.toLowerCase().includes(searchValue.toLowerCase())
@@ -44,6 +46,9 @@ const Home: NextPage = () => {
                       <Link
                         href={`/stations/${station.stationId}`}
                         className="link"
+                        onMouseEnter={() => setHoverId(station.stationId)}
+                        onMouseLeave={() => setHoverId(null)}
+                        onClick={() => setHoverId(null)}
                       >
                         <span>{station.name}</span>
                       </Link>
