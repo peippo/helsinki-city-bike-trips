@@ -43,23 +43,27 @@ const useMapLayers = () => {
     autoHighlight: true,
     getPosition: (d) => d.coordinates,
     getIcon: (d) => {
-      if (d.stationId === selectedStation.data?.stationId) {
-        return "selectedStation";
-      } else if (
-        trafficData[trafficMode]?.some(
-          (destination) => destination?.arrival.stationId === d.stationId
-        )
-      ) {
-        return "departureStation";
-      } else if (
-        trafficData[trafficMode]?.some(
-          (destination) => destination?.departure.stationId === d.stationId
-        )
-      ) {
-        return "arrivalStation";
-      } else {
-        return "station";
+      if (selectedStation.data) {
+        if (d.stationId === selectedStation.data?.stationId) {
+          return "selectedStation";
+        } else if (
+          selectedStation.data &&
+          trafficData[trafficMode].stations.some(
+            (destination) => destination?.arrival.stationId === d.stationId
+          )
+        ) {
+          return "departureStation";
+        } else if (
+          selectedStation.data &&
+          trafficData[trafficMode].stations.some(
+            (destination) => destination?.departure.stationId === d.stationId
+          )
+        ) {
+          return "arrivalStation";
+        }
       }
+
+      return "station";
     },
     getSize: (d) => d.capacity,
     onHover: (info) => setHoverInfo(info as PickingInfo),
@@ -70,7 +74,7 @@ const useMapLayers = () => {
 
   const destinationsLayer = new ArcLayer({
     id: "arc-layer",
-    data: trafficData[trafficMode],
+    data: trafficData[trafficMode]?.stations,
     pickable: true,
     getWidth: 5,
     getPolygonOffset: () => [200, 0],

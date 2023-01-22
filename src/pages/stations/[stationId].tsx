@@ -11,6 +11,8 @@ import {
   BackIcon,
   BikeIcon,
   DeparturesIcon,
+  DistanceIcon,
+  DurationIcon,
 } from "@components/icons/Icons";
 import classNames from "classnames";
 
@@ -84,11 +86,38 @@ const Station: NextPage = () => {
                 )}
               ></div>
             </div>
+
+            <div className="flex flex-col">
+              <h2 className="mt-6 mb-2 text-lg text-slate-400">
+                Average {trafficMode} journey
+              </h2>
+
+              <div className="flex items-center justify-around">
+                <div className="flex items-center">
+                  <DistanceIcon width={22} className="mr-3 text-yellow-500" />
+                  <span className="sr-only">Distance: </span>
+                  <span className="mr-2 text-xl text-white">
+                    {trafficData[trafficMode].averages.distance}
+                  </span>
+                  <span className="text-sm">kilometers</span>
+                </div>
+
+                <div className="flex items-center">
+                  <DurationIcon width={22} className="mr-3 text-yellow-500" />
+                  <span className="sr-only">Duration: </span>
+                  <span className="mr-2 text-xl text-white">
+                    {trafficData[trafficMode].averages.duration}
+                  </span>
+                  <span className="text-sm">minutes</span>
+                </div>
+              </div>
+            </div>
+
             <div className="flex flex-col">
               <h2 className="mt-6 mb-2 text-lg text-slate-400">
                 Top {trafficMode} stations
               </h2>
-              {trafficData[trafficMode].map(
+              {trafficData[trafficMode].stations.map(
                 (station) =>
                   station && (
                     <ul
