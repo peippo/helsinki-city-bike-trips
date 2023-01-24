@@ -12,7 +12,7 @@ import type { JourneyData, TrafficData } from "customTypes";
 const useSingleStation = () => {
   const router = useRouter();
   const { stationId } = router.query;
-  const stations = trpc.station.getAll.useQuery();
+  const { data: stations, status } = trpc.station.getAll.useQuery();
   const selectedStation = trpc.station.getSingle.useQuery(
     {
       stationId: parseInt(stationId as string),
@@ -86,9 +86,9 @@ const useSingleStation = () => {
           ),
         },
         stations: sortedArrivals.map(([id, journeyCount]) => {
-          if (!stations.data || !selectedStation.data || !journeyCount) return;
+          if (!stations || !selectedStation.data || !journeyCount) return;
 
-          const arrivalStation = stations.data.find(
+          const arrivalStation = stations.find(
             (station) => station.stationId === id
           ) as Station;
 
@@ -132,9 +132,9 @@ const useSingleStation = () => {
           ),
         },
         stations: sortedDepartures.map(([stationId, journeyCount]) => {
-          if (!stations.data || !selectedStation.data || !journeyCount) return;
+          if (!stations || !selectedStation.data || !journeyCount) return;
 
-          const destinationStation = stations.data.find(
+          const destinationStation = stations.find(
             (station) => station.stationId === stationId
           ) as Station;
 
@@ -167,9 +167,9 @@ const useSingleStation = () => {
         }) as JourneyData[],
       },
     };
-  }, [selectedStation.data, stations.data]);
+  }, [selectedStation.data, stations]);
 
-  return { selectedStation, trafficData };
+  return { selectedStation, trafficData, status };
 };
 
 export default useSingleStation;

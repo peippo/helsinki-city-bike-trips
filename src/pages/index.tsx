@@ -9,6 +9,7 @@ import { searchValueAtom } from "@components/StationSearch";
 import SidePanel from "@components/SidePanel";
 import { BikeIcon, PinSlashIcon } from "@components/icons/Icons";
 import StationSearch from "@components/StationSearch";
+import ErrorMessage from "@components/ErrorMessage";
 
 const Home: NextPage = () => {
   const { data: stations, status } = trpc.station.getAll.useQuery();
@@ -67,6 +68,10 @@ const Home: NextPage = () => {
             </div>
           )}
         </SidePanel>
+      )}
+
+      {status === "error" && (
+        <ErrorMessage message="Error loading, try again later!" />
       )}
     </>
   );

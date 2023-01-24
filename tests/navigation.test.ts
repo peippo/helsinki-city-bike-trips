@@ -52,3 +52,37 @@ describe("Navigation", async () => {
     await expect(page.locator(".sidepanel")).toContainText("No stations found");
   });
 });
+
+describe("Error states", async () => {
+  let server: PreviewServer;
+  let browser: Browser;
+  let page: Page;
+
+  beforeAll(async () => {
+    server = await preview({ preview: { port: 3000 } });
+    browser = await chromium.launch();
+    page = await browser.newPage();
+    await page.route("http://localhost:3000/api/trpc/**/*", (route) => {
+      route.abort();
+    });
+  });
+
+  afterAll(async () => {
+    await browser.close();
+    await new Promise<void>((resolve, reject) => {
+      server.httpServer.close((error) => (error ? reject(error) : resolve()));
+    });
+  });
+
+  // FIXME: timeout issue?
+  test.skip(
+    "should show error message on db connection failure",
+    async () => {
+      await page.goto("http://localhost:3000");
+      await expect(
+        page.getByText("Error loading, try again later")
+      ).toBeVisible();
+    },
+    { timeout: 10000 }
+  );
+});

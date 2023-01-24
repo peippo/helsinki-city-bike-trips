@@ -138,3 +138,13 @@ export const DurationIcon: React.FC<IconProps> = ({ width, className }) => (
     className={className}
   />
 );
+
+export const ExlamationIcon: React.FC<IconProps> = ({ width, className }) => (
+  <IconBase
+    width={width}
+    viewBoxWidth={512}
+    viewBoxHeight={512}
+    path="M17.1 292a71.814 71.814 0 0 1 0-72l88.3-152.9c12.9-22.3 36.6-36 62.4-36h176.5a72.1 72.1 0 0 1 62.4 36L494.9 220c12.9 22.3 12.9 49.7 0 72l-88.3 152.9c-12.9 22.3-36.6 36-62.4 36H167.7a72.1 72.1 0 0 1-62.4-36L17.1 292zM256 128c-13.3 0-24 10.7-24 24v112c0 13.3 10.7 24 24 24s24-10.7 24-24V152c0-13.3-10.7-24-24-24zm32 224c0-17.7-14.3-32-32-32s-32 14.3-32 32 14.3 32 32 32 32-14.3 32-32z"
+    className={className}
+  />
+);
