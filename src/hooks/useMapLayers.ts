@@ -9,15 +9,15 @@ import type { StationPoint } from "customTypes";
 import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
 import { trafficModeAtom } from "@pages/stations/[stationId]";
 
-export const hoverInfoAtom = atom<PickingInfo | undefined>(undefined);
-export const trafficZoneAtom = atom<PickingInfo | undefined>(undefined);
+export const hoverInfoAtom = atom<PickingInfo | null>(null);
+export const trafficZoneAtom = atom<PickingInfo | null>(null);
 export const mapHoverAtom = atom<number | null>(null);
 
 const useMapLayers = () => {
   const stations = trpc.station.getAll.useQuery();
   const { selectedStation, trafficData } = useSingleStation();
   const [, setHoverInfo] = useAtom(hoverInfoAtom);
-  const [, setTrafficZone] = useAtom(trafficZoneAtom);
+  const [trafficZone, setTrafficZone] = useAtom(trafficZoneAtom);
   const [trafficMode] = useAtom(trafficModeAtom);
   const [hoverId] = useAtom(mapHoverAtom);
   const router = useRouter();
@@ -114,9 +114,10 @@ const useMapLayers = () => {
     autoHighlight: true,
     getColorWeight: (point) => point.arrivals + point.departures,
     getPosition: (d) => d.coordinates,
-    onClick: (info) => {
-      setTrafficZone(info as PickingInfo);
-    },
+    onClick: (info) =>
+      trafficZone?.index !== info.index
+        ? setTrafficZone(info as PickingInfo)
+        : setTrafficZone(null),
     onHover: (info) => setHoverInfo(info as PickingInfo),
     // FIXME: typings
     getColorValue: (points: StationPoint[]) =>

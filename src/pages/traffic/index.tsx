@@ -5,11 +5,15 @@ import { trafficZoneAtom } from "@hooks/useMapLayers";
 
 import SidePanel from "@components/SidePanel";
 import Link from "next/link";
-import { ArrivalsIcon, DeparturesIcon } from "@components/icons/Icons";
+import {
+  ArrivalsIcon,
+  CloseIcon,
+  DeparturesIcon,
+} from "@components/icons/Icons";
 import type { StationPoint } from "customTypes";
 
 const Station: NextPage = () => {
-  const [trafficZone] = useAtom(trafficZoneAtom);
+  const [trafficZone, setTrafficZone] = useAtom(trafficZoneAtom);
   const zoneStations: StationPoint[] = trafficZone?.object.points.map(
     (z: any) => z.source
   );
@@ -26,6 +30,16 @@ const Station: NextPage = () => {
       </Head>
       {zoneStations && (
         <SidePanel width="wide">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xl">Stations in the area</h2>
+            <button
+              className="group flex items-center"
+              onClick={() => setTrafficZone(null)}
+            >
+              <span className="group-link mr-2 text-sm">Close</span>
+              <CloseIcon width={20} className=" text-yellow-500" />
+            </button>
+          </div>
           <table className="w-full">
             <thead>
               <tr className="text-left text-yellow-400">
