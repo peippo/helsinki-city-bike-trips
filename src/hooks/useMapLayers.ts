@@ -94,18 +94,22 @@ const useMapLayers = () => {
     id: "hexagon-layer",
     data: stationsData,
     radius: 500,
+    coverage: 0.9,
     colorAggregation: "SUM",
+    colorScaleType: "quantile",
     extruded: true,
     pickable: true,
-    elevationRange: [0, 800],
+    elevationRange: [0, 1200],
     elevationScale: 5,
     opacity: 0.75,
+    highlightColor: [240, 204, 21],
+    highlightedObjectIndex: trafficZone ? trafficZone.index : -1,
     colorRange: [
-      [236, 112, 20],
-      [254, 153, 41],
-      [250, 204, 21],
-      [254, 227, 145],
-      [255, 247, 188],
+      [22, 90, 205],
+      [45, 120, 205],
+      [122, 120, 225],
+      [178, 140, 235],
+      [248, 170, 255],
     ],
     autoHighlight: true,
     getColorWeight: (point) => point.arrivals + point.departures,
@@ -115,12 +119,12 @@ const useMapLayers = () => {
     },
     onHover: (info) => setHoverInfo(info as PickingInfo),
     // FIXME: typings
-    getColorValue: (points) =>
+    getColorValue: (points: StationPoint[]) =>
       points.reduce(
         (sum: number, p: StationPoint) => (sum += p.arrivals + p.departures),
         0
       ) / points.length,
-    getElevationValue: (points) =>
+    getElevationValue: (points: StationPoint[]) =>
       points.reduce(
         (sum: number, p: StationPoint) => (sum += p.arrivals + p.departures),
         0
