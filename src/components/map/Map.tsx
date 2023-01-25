@@ -7,6 +7,7 @@ import useMapViewState from "@hooks/useMapViewState";
 import useAutoViewChange from "@hooks/useAutoViewChange";
 import useMapLayers, { hoverInfoAtom } from "@hooks/useMapLayers";
 import { mapStyle } from "@styles/map-style";
+import { mapEffects } from "./map-effects";
 import type { IconLayer, ArcLayer } from "@deck.gl/layers/typed";
 import type { HexagonLayer } from "@deck.gl/aggregation-layers/typed";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -42,6 +43,7 @@ const Map = () => {
         controller={true}
         layers={activeLayers}
         getCursor={({ isHovering }) => (isHovering ? "pointer" : "grab")}
+        effects={mapEffects}
       >
         <ReactMapGl mapStyle={mapStyle} mapLib={maplibregl} />
         {hoverInfo?.object && <Tooltip hoverInfo={hoverInfo} />}
