@@ -9,7 +9,7 @@ import {
   ForwardIcon,
   ArrivalsIcon,
   DeparturesIcon,
-} from "./icons/Icons";
+} from "../icons/Icons";
 
 type TrafficSource = {
   source: StationPoint;

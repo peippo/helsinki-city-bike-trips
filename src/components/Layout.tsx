@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-import Map from "@components/Map";
+import Map from "@components/map/Map";
 import MainNav from "./MainNav";
 import classNames from "classnames";
 import type { NextFont } from "@next/font/dist/types";
