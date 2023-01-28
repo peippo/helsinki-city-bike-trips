@@ -15,7 +15,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import Tooltip from "./Tooltip";
 
 const Map = () => {
-  const { stationsLayer, destinationsLayer, trafficLayer } = useMapLayers();
+  const { stationsLayer, topJourneysLayer, trafficLayer } = useMapLayers();
   const { viewState, handleViewStateChange } = useMapViewState();
   const [hoverInfo] = useAtom(hoverInfoAtom);
   const router = useRouter();
@@ -25,7 +25,7 @@ const Map = () => {
 
   switch (router.pathname) {
     case "/stations/[stationId]":
-      activeLayers = [stationsLayer, destinationsLayer];
+      activeLayers = [stationsLayer, topJourneysLayer];
       break;
     case "/traffic":
       activeLayers = [trafficLayer];
@@ -46,7 +46,9 @@ const Map = () => {
         effects={mapEffects}
       >
         <ReactMapGl mapStyle={mapStyle} mapLib={maplibregl} />
-        {hoverInfo?.object && <Tooltip hoverInfo={hoverInfo} />}
+        {hoverInfo?.info.object && (
+          <Tooltip type={hoverInfo.type} info={hoverInfo.info} />
+        )}
       </DeckGL>
     </>
   );

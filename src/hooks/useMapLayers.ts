@@ -4,64 +4,61 @@ import { IconLayer, ArcLayer } from "@deck.gl/layers/typed";
 import { HexagonLayer } from "@deck.gl/aggregation-layers/typed";
 import useSingleStation from "@hooks/useSingleStation";
 import { useRouter } from "next/router";
-import { STATION } from "@constants/index";
-import type { StationPoint } from "customTypes";
-import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
 import { trafficModeAtom } from "@pages/stations/[stationId]";
+import type { StationData, TooltipTypes } from "customTypes";
+import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
 
-export const hoverInfoAtom = atom<PickingInfo | null>(null);
+export const hoverInfoAtom = atom<{
+  type: TooltipTypes;
+  info: PickingInfo;
+} | null>(null);
 export const trafficZoneAtom = atom<PickingInfo | null>(null);
 export const mapHoverAtom = atom<number | null>(null);
 
 const useMapLayers = () => {
-  const stations = trpc.station.getAll.useQuery();
+  const { data: stations } = trpc.station.getAll.useQuery();
   const { selectedStation, trafficData } = useSingleStation();
   const [, setHoverInfo] = useAtom(hoverInfoAtom);
   const [trafficZone, setTrafficZone] = useAtom(trafficZoneAtom);
   const [trafficMode] = useAtom(trafficModeAtom);
-  const [hoverId] = useAtom(mapHoverAtom);
+  const [hoverId, setHoverId] = useAtom(mapHoverAtom);
   const router = useRouter();
-
-  const stationsData: StationPoint[] | undefined = stations.data?.map((s) => {
-    return {
-      type: STATION,
-      coordinates: [s.longitude, s.latitude],
-      capacity: s.capacity,
-      name: s.name,
-      stationId: s.stationId,
-      departures: s._count.departures,
-      arrivals: s._count.arrivals,
-    };
-  });
 
   const stationsLayer = new IconLayer({
     id: "stations-icon-layer",
-    data: stationsData,
+    data: stations,
     pickable: true,
     iconAtlas: "/marker-atlas.png",
     iconMapping: "/marker-atlas-mapping.json",
     sizeScale: 1,
     sizeMinPixels: 20,
     autoHighlight: true,
-    highlightedObjectIndex: stationsData?.findIndex(
+    highlightedObjectIndex: stations?.findIndex(
       (station) => station.stationId === hoverId
     ),
-    getPosition: (d) => d.coordinates,
-    getIcon: (d) => {
-      if (selectedStation.data) {
-        if (d.stationId === selectedStation.data?.stationId) {
+    updateTriggers: {
+      getIcon: selectedStation && trafficMode,
+    },
+    getPosition: (station: StationData) => [
+      station.longitude,
+      station.latitude,
+    ],
+    getIcon: (station: StationData) => {
+      if (selectedStation) {
+        if (station.stationId === selectedStation.stationId) {
           return "selectedStation";
         } else if (
-          selectedStation.data &&
+          selectedStation &&
           trafficData[trafficMode].stations.some(
-            (destination) => destination?.arrival.stationId === d.stationId
+            (destination) => destination.arrival.stationId === station.stationId
           )
         ) {
           return "departureStation";
         } else if (
-          selectedStation.data &&
+          selectedStation &&
           trafficData[trafficMode].stations.some(
-            (destination) => destination?.departure.stationId === d.stationId
+            (destination) =>
+              destination.departure.stationId === station.stationId
           )
         ) {
           return "arrivalStation";
@@ -70,14 +67,17 @@ const useMapLayers = () => {
 
       return "station";
     },
-    getSize: (d) => d.capacity,
-    onHover: (info) => setHoverInfo(info as PickingInfo),
+    getSize: (station: StationData) => station.capacity,
+    onHover: (info) => {
+      setHoverInfo({ type: "station", info: info as PickingInfo });
+      setHoverId(info.object ? info.object?.stationId : null);
+    },
     onClick: (info) => {
       router.push(`/stations/${info.object.stationId}`);
     },
   });
 
-  const destinationsLayer = new ArcLayer({
+  const topJourneysLayer = new ArcLayer({
     id: "arc-layer",
     data: trafficData[trafficMode]?.stations,
     pickable: true,
@@ -87,12 +87,13 @@ const useMapLayers = () => {
     getTargetPosition: (d) => d.arrival.coordinates,
     getSourceColor: () => [50, 140, 255],
     getTargetColor: () => [200, 140, 255],
-    onHover: (info) => setHoverInfo(info as PickingInfo),
+    onHover: (info) =>
+      setHoverInfo({ type: "journey", info: info as PickingInfo }),
   });
 
   const trafficLayer = new HexagonLayer({
     id: "hexagon-layer",
-    data: stationsData,
+    data: stations,
     radius: 500,
     coverage: 0.9,
     colorAggregation: "SUM",
@@ -112,27 +113,31 @@ const useMapLayers = () => {
       [248, 170, 255],
     ],
     autoHighlight: true,
-    getColorWeight: (point) => point.arrivals + point.departures,
-    getPosition: (d) => d.coordinates,
+    getColorWeight: (station) =>
+      station._count.arrivals + station._count.departures,
+    getPosition: (station) => [station.longitude, station.latitude],
     onClick: (info) =>
       trafficZone?.index !== info.index
         ? setTrafficZone(info as PickingInfo)
         : setTrafficZone(null),
-    onHover: (info) => setHoverInfo(info as PickingInfo),
+    onHover: (info) =>
+      setHoverInfo({ type: "traffic", info: info as PickingInfo }),
     // FIXME: typings
-    getColorValue: (points: StationPoint[]) =>
+    getColorValue: (points: StationData[]) =>
       points.reduce(
-        (sum: number, p: StationPoint) => (sum += p.arrivals + p.departures),
+        (sum: number, p: StationData) =>
+          (sum += p._count.arrivals + p._count.departures),
         0
       ) / points.length,
-    getElevationValue: (points: StationPoint[]) =>
+    getElevationValue: (points: StationData[]) =>
       points.reduce(
-        (sum: number, p: StationPoint) => (sum += p.arrivals + p.departures),
+        (sum: number, p: StationData) =>
+          (sum += p._count.arrivals + p._count.departures),
         0
       ),
   });
 
-  return { stationsLayer, destinationsLayer, trafficLayer };
+  return { stationsLayer, topJourneysLayer, trafficLayer };
 };
 
 export default useMapLayers;

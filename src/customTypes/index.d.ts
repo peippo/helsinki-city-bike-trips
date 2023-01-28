@@ -1,10 +1,16 @@
-import type { STATION, TRAFFIC } from "@constants/index";
+import { Prisma } from "@prisma/client";
 
-type PointType = {
-  type: STATION | TRAFFIC;
-};
+const StationData = Prisma.validator<Prisma.StationArgs>()({
+  include: { _count: { select: { departures: true, arrivals: true } } },
+});
 
-export type TrafficData = {
+type StationData = Prisma.StationGetPayload<typeof StationData>;
+
+type TrafficModes = "arrival" | "departure";
+
+type TooltipTypes = "station" | "traffic" | "journey";
+
+type TrafficData = {
   arrival: {
     stations: JourneyPoints[];
     averages: {
@@ -21,17 +27,7 @@ export type TrafficData = {
   };
 };
 
-export type StationData = {
-  coordinates: number[];
-  capacity: number;
-  name: string;
-  stationId: number;
-  arrivals: number;
-  departures: number;
-};
-
-export type JourneyData = {
-  type: string;
+type JourneyData = {
   departure: {
     stationId: number;
     name: string;
@@ -46,5 +42,6 @@ export type JourneyData = {
   journeyPercentage: string;
 };
 
-type StationPoint = StationData & PointType;
-type JourneyPoints = JourneyData & PointType;
+type AggregationSource = {
+  source: StationData;
+};

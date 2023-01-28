@@ -1,7 +1,4 @@
-import React from "react";
-import useCurrentMode from "@hooks/useMapMode";
-import { STATION, TRAFFIC, DESTINATION } from "@constants/index";
-import type { StationPoint } from "customTypes";
+import type { AggregationSource, TooltipTypes } from "customTypes";
 import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
 
 import {
@@ -11,66 +8,58 @@ import {
   DeparturesIcon,
 } from "../icons/Icons";
 
-type TrafficSource = {
-  source: StationPoint;
-};
-
 type Props = {
-  hoverInfo: PickingInfo;
+  type: TooltipTypes;
+  info: PickingInfo;
 };
 
-const Tooltip: React.FC<Props> = ({ hoverInfo }) => {
-  const mode = useCurrentMode();
-
-  const totalArrivals = hoverInfo.object?.points?.reduce(
-    (sum: number, p: TrafficSource) => (sum += p.source.arrivals),
+const Tooltip: React.FC<Props> = ({ type, info }) => {
+  const totalArrivals = info.object?.points?.reduce(
+    (sum: number, point: AggregationSource) =>
+      (sum += point.source._count.arrivals),
     0
   );
 
-  const totalDepartures = hoverInfo.object?.points?.reduce(
-    (sum: number, p: TrafficSource) => (sum += p.source.departures),
+  const totalDepartures = info.object?.points?.reduce(
+    (sum: number, point: AggregationSource) =>
+      (sum += point.source._count.departures),
     0
   );
-
-  const tooltipType = hoverInfo.object.type;
-  const isStation = mode === STATION || tooltipType === STATION;
-  const isDestination = mode === DESTINATION && tooltipType === DESTINATION;
-  const isTraffic = mode === TRAFFIC;
 
   return (
     <div
       className="z-1 pointer-events-none absolute -translate-x-1/2 -translate-y-[calc(100%+10px)] rounded-lg border-b-2 border-slate-900 bg-sky-800 px-3 py-2 text-center text-slate-300 shadow-lg"
       style={{
-        left: hoverInfo.x,
-        top: hoverInfo.y,
+        left: info.x,
+        top: info.y,
       }}
     >
-      {isStation && (
+      {type === "station" && (
         <>
-          <h2 className="text-yellow-300">{hoverInfo.object.name}</h2>
+          <h2 className="text-yellow-300">{info.object.name}</h2>
           <p className="m-0 flex items-center justify-center uppercase">
             <span className="sr-only">Capacity: </span>
-            <strong>{hoverInfo.object.capacity}</strong>
+            <strong>{info.object.capacity}</strong>
             <BikeIcon width={24} className="ml-2" />{" "}
           </p>
         </>
       )}
-      {isDestination && (
+      {type === "journey" && (
         <>
           <div className="flex items-center gap-2 text-sm">
-            <span>{hoverInfo.object.departure.name}</span>
+            <span>{info.object.departure.name}</span>
             <ForwardIcon width={15} className="text-yellow-500" />
-            <span>{hoverInfo.object.arrival.name}</span>
+            <span>{info.object.arrival.name}</span>
           </div>
         </>
       )}
-      {isTraffic && (
+      {type === "traffic" && (
         <>
           <div className="flex flex-col items-center gap-2 text-sm">
             <div className="flex flex-col gap-1">
               <h2 className="text-yellow-300">
-                <span>{hoverInfo.object.points.length}</span>{" "}
-                {hoverInfo.object.points.length === 1
+                <span>{info.object.points.length}</span>{" "}
+                {info.object.points.length === 1
                   ? `station in the area`
                   : `stations in the area`}
               </h2>

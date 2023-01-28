@@ -5,7 +5,7 @@ import type { ViewStateChangeParameters } from "@deck.gl/core/src/controllers/co
 const LONGITUDE_RANGE: readonly [number, number] = [24.65, 25.19];
 const LATITUDE_RANGE: readonly [number, number] = [60.1, 60.3];
 
-const viewAtom = atom<Record<string, any>>({
+const viewAtom = atom<Record<string, number | FlyToInterpolator>>({
   longitude: 24.9235379,
   latitude: 60.17061,
   zoom: 13,

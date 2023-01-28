@@ -1,16 +1,15 @@
 import { useEffect } from "react";
 import useSingleStation from "@hooks/useSingleStation";
 import useMapViewState from "./useMapViewState";
-import useMapMode from "./useMapMode";
-import { TRAFFIC } from "@constants/index";
+import { useRouter } from "next/router";
 
 /**
  * Fly to selected station & zoom out map on traffic view
  */
 const useAutoViewChange = () => {
+  const router = useRouter();
   const { selectedStation } = useSingleStation();
   const { setViewState } = useMapViewState();
-  const mode = useMapMode();
 
   useEffect(() => {
     const flyTo = (longitude: number, latitude: number) => {
@@ -33,14 +32,14 @@ const useAutoViewChange = () => {
       }));
     };
 
-    if (selectedStation.data) {
-      flyTo(selectedStation.data.longitude, selectedStation.data.latitude);
+    if (selectedStation) {
+      flyTo(selectedStation.longitude, selectedStation.latitude);
     }
 
-    if (mode === TRAFFIC) {
+    if (router.pathname.includes("traffic")) {
       zoomTo(11);
     }
-  }, [selectedStation.data, mode, setViewState]);
+  }, [selectedStation, setViewState, router.pathname]);
 };
 
 export default useAutoViewChange;

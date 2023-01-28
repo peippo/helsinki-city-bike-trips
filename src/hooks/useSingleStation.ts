@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { useRouter } from "next/router";
 import { trpc } from "@utils/trpc";
 import { getPercent, getKilometers, getMinutes } from "@utils/general";
-import { DESTINATION } from "@constants/index";
 import type { Journey, Station } from "@prisma/client";
 import type { JourneyData, TrafficData } from "customTypes";
 
@@ -12,27 +11,27 @@ import type { JourneyData, TrafficData } from "customTypes";
 const useSingleStation = () => {
   const router = useRouter();
   const { stationId } = router.query;
-  const { data: stations, status } = trpc.station.getAll.useQuery();
-  const selectedStation = trpc.station.getSingle.useQuery(
+  const { data: stations } = trpc.station.getAll.useQuery();
+  const { data: selectedStation, status } = trpc.station.getSingle.useQuery(
     {
       stationId: parseInt(stationId as string),
     },
     { enabled: !!stationId }
   );
 
-  const stats = {
-    arrival: {
-      totalDistance: 0,
-      totalDuration: 0,
-    },
-    departure: {
-      totalDistance: 0,
-      totalDuration: 0,
-    },
-  };
-
   const trafficData: TrafficData = useMemo(() => {
-    if (!selectedStation.data) return {} as TrafficData;
+    if (!selectedStation) return {} as TrafficData;
+
+    const stats = {
+      arrival: {
+        totalDistance: 0,
+        totalDuration: 0,
+      },
+      departure: {
+        totalDistance: 0,
+        totalDuration: 0,
+      },
+    };
 
     const countJourneys = (
       type: "departure" | "arrival",
@@ -57,7 +56,7 @@ const useSingleStation = () => {
       ).slice(0, 5);
 
     // Top departure stations
-    const departures = selectedStation.data.departures.reduce(
+    const departures = selectedStation.departures.reduce(
       (stationList, departure) =>
         countJourneys("departure", stationList, departure),
       new Map()
@@ -66,7 +65,7 @@ const useSingleStation = () => {
     const sortedDepartures = sortTopStations(departures);
 
     // Top arrival stations
-    const arrivals = selectedStation.data.arrivals.reduce(
+    const arrivals = selectedStation.arrivals.reduce(
       (stationList, arrival) => countJourneys("arrival", stationList, arrival),
       new Map()
     );
@@ -78,22 +77,21 @@ const useSingleStation = () => {
         averages: {
           distance: getKilometers(
             stats.arrival.totalDistance,
-            selectedStation.data.arrivals.length
+            selectedStation.arrivals.length
           ),
           duration: getMinutes(
             stats.arrival.totalDuration,
-            selectedStation.data.arrivals.length
+            selectedStation.arrivals.length
           ),
         },
         stations: sortedArrivals.map(([id, journeyCount]) => {
-          if (!stations || !selectedStation.data || !journeyCount) return;
+          if (!stations || !selectedStation || !journeyCount) return;
 
           const arrivalStation = stations.find(
             (station) => station.stationId === id
           ) as Station;
 
           return {
-            type: DESTINATION,
             departure: {
               stationId: arrivalStation.stationId,
               name: arrivalStation.name,
@@ -104,18 +102,18 @@ const useSingleStation = () => {
               ],
             },
             arrival: {
-              stationId: selectedStation.data.stationId,
-              name: selectedStation.data.name,
+              stationId: selectedStation.stationId,
+              name: selectedStation.name,
               coordinates: [
-                selectedStation.data.longitude,
-                selectedStation.data.latitude,
+                selectedStation.longitude,
+                selectedStation.latitude,
                 1,
               ],
             },
             journeyCount: journeyCount,
             journeyPercentage: getPercent(
               journeyCount,
-              selectedStation.data.arrivals.length
+              selectedStation.arrivals.length
             ),
           };
         }) as JourneyData[],
@@ -124,28 +122,27 @@ const useSingleStation = () => {
         averages: {
           distance: getKilometers(
             stats.departure.totalDistance,
-            selectedStation.data.departures.length
+            selectedStation.departures.length
           ),
           duration: getMinutes(
             stats.departure.totalDuration,
-            selectedStation.data.departures.length
+            selectedStation.departures.length
           ),
         },
         stations: sortedDepartures.map(([stationId, journeyCount]) => {
-          if (!stations || !selectedStation.data || !journeyCount) return;
+          if (!stations || !selectedStation || !journeyCount) return;
 
           const destinationStation = stations.find(
             (station) => station.stationId === stationId
           ) as Station;
 
           return {
-            type: DESTINATION,
             departure: {
-              stationId: selectedStation.data.stationId,
-              name: selectedStation.data.name,
+              stationId: selectedStation.stationId,
+              name: selectedStation.name,
               coordinates: [
-                selectedStation.data.longitude,
-                selectedStation.data.latitude,
+                selectedStation.longitude,
+                selectedStation.latitude,
                 1,
               ],
             },
@@ -161,13 +158,13 @@ const useSingleStation = () => {
             journeyCount: journeyCount,
             journeyPercentage: getPercent(
               journeyCount,
-              selectedStation.data.departures.length
+              selectedStation.departures.length
             ),
           };
         }) as JourneyData[],
       },
     };
-  }, [selectedStation.data, stations]);
+  }, [selectedStation, stations]);
 
   return { selectedStation, trafficData, status };
 };

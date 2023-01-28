@@ -3,8 +3,8 @@ import Head from "next/head";
 import Link from "next/link";
 import { atom, useAtom } from "jotai";
 import useSingleStation from "@hooks/useSingleStation";
-import { TrafficModes } from "customTypes/enums";
 import { mapHoverAtom } from "@hooks/useMapLayers";
+import type { TrafficModes } from "customTypes";
 
 import SidePanel from "@components/SidePanel";
 import {
@@ -18,7 +18,7 @@ import {
 import classNames from "classnames";
 import ErrorMessage from "@components/ErrorMessage";
 
-export const trafficModeAtom = atom<TrafficModes>(TrafficModes.Arrival);
+export const trafficModeAtom = atom<TrafficModes>("arrival");
 
 const Station: NextPage = () => {
   const { selectedStation, trafficData, status } = useSingleStation();
@@ -29,8 +29,8 @@ const Station: NextPage = () => {
     <>
       <Head>
         <title>
-          {selectedStation.data
-            ? `${selectedStation.data.name} [${selectedStation.data.stationId}]`
+          {selectedStation
+            ? `${selectedStation.name} [${selectedStation.stationId}]`
             : "Loading..."}
         </title>
       </Head>
@@ -41,55 +41,53 @@ const Station: NextPage = () => {
             <BackIcon width={12} className="mr-2 text-yellow-500" />
             <span className="group-link">All stations</span>
           </Link>
-          {selectedStation.data && (
+          {selectedStation && (
             <div className="flex flex-col">
               <div className="mb-4 flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl">{selectedStation.data.name}</h2>
+                  <h2 className="text-xl">{selectedStation.name}</h2>
                   <span className="text-sm text-slate-400">
-                    {selectedStation.data.address}
+                    {selectedStation.address}
                   </span>
                 </div>
                 <div className="align-center flex aspect-square items-center justify-center rounded-full border-l bg-yellow-400 px-3 text-slate-900">
                   <span className="sr-only">Station ID: </span>
-                  <span>{selectedStation.data.stationId}</span>
+                  <span>{selectedStation.stationId}</span>
                 </div>
               </div>
               <div className="mb-4 flex items-center">
                 <BikeIcon width={24} className="mr-2 text-yellow-500" />
-                <p>Capacity {selectedStation.data.capacity} bikes</p>
+                <p>Capacity {selectedStation.capacity} bikes</p>
               </div>
               <div className="relative flex items-center justify-center border-t border-b border-cyan-800">
                 <button
-                  onClick={() => setTrafficMode(TrafficModes.Arrival)}
+                  onClick={() => setTrafficMode("arrival")}
                   className={classNames(
                     "flex flex-grow basis-1/2 items-center justify-center border-b-4 border-cyan-800 px-2 py-3 text-sm",
-                    trafficMode === TrafficModes.Arrival
+                    trafficMode === "arrival"
                       ? "border-b-yellow-500 bg-gradient-to-t from-yellow-500/25 via-transparent to-transparent"
                       : "from-cyan-700/25 via-transparent to-transparent hover:border-b-cyan-700 hover:bg-gradient-to-t"
                   )}
                 >
                   <ArrivalsIcon width={22} className="mr-3 text-yellow-500" />
-                  <p>{selectedStation.data.arrivals.length} arrivals</p>
+                  <p>{selectedStation.arrivals.length} arrivals</p>
                 </button>
                 <button
-                  onClick={() => setTrafficMode(TrafficModes.Departure)}
+                  onClick={() => setTrafficMode("departure")}
                   className={classNames(
                     "flex basis-1/2 items-center justify-center border-b-4 border-l border-cyan-800 px-2 py-3 text-sm",
-                    trafficMode === TrafficModes.Departure
+                    trafficMode === "departure"
                       ? "border-b-yellow-500 bg-gradient-to-t from-yellow-500/25 via-transparent to-transparent"
                       : "from-cyan-700/25 via-transparent to-transparent hover:border-b-cyan-700 hover:bg-gradient-to-t"
                   )}
                 >
                   <DeparturesIcon width={22} className="mr-3 text-yellow-500" />
-                  <p>{selectedStation.data.departures.length} departures</p>
+                  <p>{selectedStation.departures.length} departures</p>
                 </button>
                 <div
                   className={classNames(
                     "absolute bottom-0 translate-y-full border-x-8 border-t-8 border-b-0 border-x-transparent border-t-yellow-500",
-                    trafficMode === TrafficModes.Arrival
-                      ? "left-1/4"
-                      : "left-3/4"
+                    trafficMode === "arrival" ? "left-1/4" : "left-3/4"
                   )}
                 ></div>
               </div>
@@ -139,7 +137,7 @@ const Station: NextPage = () => {
                             className="mt-2"
                             key={
                               station[
-                                trafficMode === TrafficModes.Arrival
+                                trafficMode === "arrival"
                                   ? "departure"
                                   : "arrival"
                               ].stationId
@@ -151,7 +149,7 @@ const Station: NextPage = () => {
                                 onMouseEnter={() =>
                                   setHoverId(
                                     station[
-                                      trafficMode === TrafficModes.Arrival
+                                      trafficMode === "arrival"
                                         ? "departure"
                                         : "arrival"
                                     ].stationId
@@ -160,7 +158,7 @@ const Station: NextPage = () => {
                                 onMouseLeave={() => setHoverId(null)}
                                 href={`/stations/${
                                   station[
-                                    trafficMode === TrafficModes.Arrival
+                                    trafficMode === "arrival"
                                       ? "departure"
                                       : "arrival"
                                   ].stationId
@@ -168,7 +166,7 @@ const Station: NextPage = () => {
                               >
                                 {
                                   station[
-                                    trafficMode === TrafficModes.Arrival
+                                    trafficMode === "arrival"
                                       ? "departure"
                                       : "arrival"
                                   ].name
