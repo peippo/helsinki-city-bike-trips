@@ -158,3 +158,43 @@ export const CloseIcon: React.FC<IconProps> = ({ width, className }) => (
     className={className}
   />
 );
+
+export const SortUp: React.FC<IconProps> = ({ width, className }) => (
+  <IconBase
+    width={width}
+    viewBoxWidth={320}
+    viewBoxHeight={512}
+    path="M182.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-9.2 9.2-11.9 22.9-6.9 34.9s16.6 19.8 29.6 19.8H288c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-128-128z"
+    className={className}
+  />
+);
+
+export const SortDown: React.FC<IconProps> = ({ width, className }) => (
+  <IconBase
+    width={width}
+    viewBoxWidth={320}
+    viewBoxHeight={512}
+    path="M182.6 470.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8H288c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128z"
+    className={className}
+  />
+);
+
+export const ArrowRight: React.FC<IconProps> = ({ width, className }) => (
+  <IconBase
+    width={width}
+    viewBoxWidth={448}
+    viewBoxHeight={512}
+    path="M443.7 266.8l-165.9 176C274.5 446.3 269.1 448 265.5 448c-3.986 0-7.988-1.375-11.16-4.156c-6.773-5.938-7.275-16.06-1.118-22.59L393.9 272H16.59c-9.171 0-16.59-7.155-16.59-15.1S7.421 240 16.59 240h377.3l-140.7-149.3c-6.157-6.531-5.655-16.66 1.118-22.59c6.789-5.906 17.27-5.469 23.45 1.094l165.9 176C449.4 251.3 449.4 260.7 443.7 266.8z"
+    className={className}
+  />
+);
+
+export const ArrowLeft: React.FC<IconProps> = ({ width, className }) => (
+  <IconBase
+    width={width}
+    viewBoxWidth={448}
+    viewBoxHeight={512}
+    path="M448 256C448 264.8 440.6 272 431.4 272H54.11l140.7 149.3c6.157 6.531 5.655 16.66-1.118 22.59C190.5 446.6 186.5 448 182.5 448c-4.505 0-9.009-1.75-12.28-5.25l-165.9-176c-5.752-6.094-5.752-15.41 0-21.5l165.9-176c6.19-6.562 16.69-7 23.45-1.094c6.773 5.938 7.275 16.06 1.118 22.59L54.11 240h377.3C440.6 240 448 247.2 448 256z"
+    className={className}
+  />
+);

@@ -14,11 +14,11 @@ body {
 }
 
 .link {
-  @apply inline-flex justify-between border-b border-slate-600 text-sm outline-none hover:text-yellow-500 focus:text-yellow-500 focus-visible:border-yellow-500;
+  @apply inline-flex justify-between border-b border-slate-600 text-sm outline-none hover:text-yellow-500 focus-visible:border-yellow-500 focus-visible:text-yellow-500;
 }
 
 .group-link {
-  @apply border-b border-slate-600 outline-none group-hover:text-yellow-500 group-focus:text-yellow-500;
+  @apply border-b border-slate-600 outline-none group-hover:text-yellow-500 group-focus-visible:text-yellow-500;
 }
 
 input[type="search"]::-webkit-search-cancel-button {

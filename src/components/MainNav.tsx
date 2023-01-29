@@ -52,6 +52,7 @@ const MainNav = () => {
           Stations
         </NavLink>
         <NavLink path="/traffic">Traffic</NavLink>
+        <NavLink path="/journeys">Journeys</NavLink>
       </nav>
     </header>
   );
