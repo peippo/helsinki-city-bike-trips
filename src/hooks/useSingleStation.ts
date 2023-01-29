@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useRouter } from "next/router";
 import { trpc } from "@utils/trpc";
-import { getPercent, getKilometers, getMinutes } from "@utils/general";
+import { getPercent, getAvgKilometers, getAvgMinutes } from "@utils/general";
 import type { Journey, Station } from "@prisma/client";
 import type { JourneyData, TrafficData } from "customTypes";
 
@@ -75,11 +75,11 @@ const useSingleStation = () => {
     return {
       arrival: {
         averages: {
-          distance: getKilometers(
+          distance: getAvgKilometers(
             stats.arrival.totalDistance,
             selectedStation.arrivals.length
           ),
-          duration: getMinutes(
+          duration: getAvgMinutes(
             stats.arrival.totalDuration,
             selectedStation.arrivals.length
           ),
@@ -120,11 +120,11 @@ const useSingleStation = () => {
       },
       departure: {
         averages: {
-          distance: getKilometers(
+          distance: getAvgKilometers(
             stats.departure.totalDistance,
             selectedStation.departures.length
           ),
-          duration: getMinutes(
+          duration: getAvgMinutes(
             stats.departure.totalDuration,
             selectedStation.departures.length
           ),
