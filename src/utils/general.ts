@@ -1,7 +1,9 @@
 export const getPercent = (a: number, b: number) => ((a / b) * 100).toFixed(1);
 
-export const getKilometers = (meters: number) =>
-  Math.round((meters / 1000) * 1e2) / 1e2;
+export const formatDistance = (meters: number) =>
+  meters < 1000
+    ? `${meters} m`
+    : `${Math.round((meters / 1000) * 1e2) / 1e2} km`;
 
 export const getAvgKilometers = (totalMeters: number, count: number) =>
   Math.round((totalMeters / count / 1000) * 1e2) / 1e2;

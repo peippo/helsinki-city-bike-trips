@@ -2,7 +2,7 @@ import Head from "next/head";
 import { trpc } from "@utils/trpc";
 import { atom, useAtom } from "jotai";
 import classNames from "classnames";
-import { getKilometers, formatDateTime, formatDuration } from "@utils/general";
+import { formatDistance, formatDateTime, formatDuration } from "@utils/general";
 import type { NextPage } from "next";
 
 import SidePanel from "@components/SidePanel";
@@ -135,7 +135,7 @@ const Station: NextPage = () => {
                   <span>{formatDuration(journey.duration)}</span>
                 </td>
                 <td className="w-1/3 text-right">
-                  <span>{getKilometers(journey.distance)} km</span>
+                  <span>{formatDistance(journey.distance)}</span>
                 </td>
               </tr>
             ))}

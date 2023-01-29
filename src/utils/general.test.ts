@@ -8,9 +8,9 @@ describe("Utils", () => {
     expect(utils.getPercent(1, 1)).toBe("100.0");
   });
 
-  test("getKilometers", async () => {
-    expect(utils.getKilometers(50)).toBe(0.05);
-    expect(utils.getKilometers(1234)).toBe(1.23);
+  test("formatDistance", async () => {
+    expect(utils.formatDistance(50)).toBe("50 m");
+    expect(utils.formatDistance(1234)).toBe("1.23 km");
   });
 
   test("getAvgKilometers", async () => {
