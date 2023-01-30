@@ -45,7 +45,7 @@ const Station: NextPage = () => {
           <table className="w-full">
             <thead>
               <tr className="text-left text-yellow-400">
-                <th>Station name</th>
+                <th className="text-sm lg:text-base">Station name</th>
                 <th>
                   <span className="sr-only">Arrivals</span>
                   <ArrivalsIcon className="mx-auto" width={16} />
@@ -57,7 +57,7 @@ const Station: NextPage = () => {
               </tr>
             </thead>
             <tbody>
-              {zoneStations?.map((station: StationPoint) => (
+              {zoneStations?.map((station: StationData) => (
                 <tr key={station.stationId}>
                   <td>
                     <Link

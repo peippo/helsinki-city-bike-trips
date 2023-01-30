@@ -40,7 +40,7 @@ describe("Utils", () => {
     expect(utils.formatDuration(3600)).toBe("1 h");
     expect(utils.formatDuration(3665)).toBe("1 h 1 min 5 s");
     expect(utils.formatDuration(86400)).toBe("1 day");
-    expect(utils.formatDuration(86465)).toBe("1 day 1 min 5 s");
+    expect(utils.formatDuration(86465)).toBe("1 day 1 min");
     expect(utils.formatDuration(172800)).toBe("2 days");
   });
 });

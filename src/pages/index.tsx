@@ -33,10 +33,10 @@ const Home: NextPage = () => {
             <table className="w-full">
               <thead>
                 <tr className="text-left text-yellow-400">
-                  <th>Station name</th>
+                  <th className="text-sm lg:text-base">Station name</th>
                   <th>
                     <span className="sr-only">Capacity</span>
-                    <BikeIcon width={20} />
+                    <BikeIcon width={20} className="mx-auto" />
                   </th>
                 </tr>
               </thead>

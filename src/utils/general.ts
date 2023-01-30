@@ -21,7 +21,7 @@ export const formatDuration = (seconds: number) => {
     day: d > 0 ? (d > 1 ? `${d} days ` : `${d} day `) : "",
     h: h > 0 ? `${h} h ` : "",
     min: min > 0 ? `${min} min ` : "",
-    s: s > 0 ? `${s} s ` : "",
+    s: s > 0 && !d ? `${s} s ` : "",
   };
 
   return `${strings.day}${strings.h}${strings.min}${strings.s}`.trim();

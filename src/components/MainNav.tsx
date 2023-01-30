@@ -20,7 +20,7 @@ const NavLink: React.FC<Props> = ({ children, path, pathMatches }) => {
     <Link
       href={path}
       className={classNames(
-        "transition-colors",
+        "text-sm transition-colors md:text-base",
         isActive ? " text-yellow-400" : "text-slate-400 hover:text-slate-200"
       )}
     >
@@ -38,7 +38,7 @@ const MainNav = () => {
           width="40"
           height="28"
           alt=""
-          className="mr-3"
+          className="mr-3 hidden sm:block"
         />
         <h1 className="mr-1 flex flex-col">
           <span className="text-md font-bold leading-none">Helsinki </span>

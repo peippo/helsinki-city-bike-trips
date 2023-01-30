@@ -66,7 +66,7 @@ const Station: NextPage = () => {
           )}
           onClick={() => handleFilterClick(filter)}
         >
-          <span>{text}</span>
+          <span className="text-sm lg:text-base">{text}</span>
           <div className="relative h-4 w-3">
             <SortUp
               className={classNames(

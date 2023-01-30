@@ -109,7 +109,10 @@ const Station: NextPage = () => {
                         <span className="mr-2 text-xl text-white">
                           {trafficData[trafficMode].averages.distance}
                         </span>
-                        <span className="text-sm">kilometers</span>
+                        <span className="hidden text-sm sm:inline">
+                          kilometers
+                        </span>
+                        <span className="text-sm sm:hidden">km</span>
                       </div>
 
                       <div className="flex items-center">
@@ -121,7 +124,10 @@ const Station: NextPage = () => {
                         <span className="mr-2 text-xl text-white">
                           {trafficData[trafficMode].averages.duration}
                         </span>
-                        <span className="text-sm">minutes</span>
+                        <span className="hidden text-sm sm:inline">
+                          minutes
+                        </span>
+                        <span className="text-sm sm:hidden">min</span>
                       </div>
                     </div>
                   </div>
