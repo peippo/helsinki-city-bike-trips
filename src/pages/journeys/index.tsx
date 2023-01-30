@@ -1,5 +1,4 @@
 import Head from "next/head";
-import { trpc } from "@utils/trpc";
 import { atom, useAtom } from "jotai";
 import classNames from "classnames";
 import { formatDistance, formatDateTime, formatDuration } from "@utils/general";
@@ -12,27 +11,22 @@ import {
   SortDown,
   SortUp,
 } from "@components/icons/Icons";
+import useJourneys from "@hooks/useJourneys";
 
 type FilterOptions = "departureTime" | "duration" | "distance";
 type OrderByOptions = "asc" | "desc";
 
-const filterAtom = atom<FilterOptions>("departureTime");
-const orderByAtom = atom<OrderByOptions>("asc");
-const currentPageAtom = atom<number>(0);
+export const filterAtom = atom<FilterOptions>("departureTime");
+export const orderByAtom = atom<OrderByOptions>("asc");
+export const currentPageAtom = atom<number>(0);
 
 const Station: NextPage = () => {
   const [currentFilter, setCurrentFilter] = useAtom(filterAtom);
   const [orderBy, setOrderBy] = useAtom(orderByAtom);
   const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
 
-  const {
-    data: journeys,
-    fetchNextPage,
-    fetchPreviousPage,
-  } = trpc.journey.getBatch.useInfiniteQuery(
-    { limit: 30, filter: currentFilter, orderBy: orderBy },
-    { getNextPageParam: (lastPage) => lastPage.nextCursor }
-  );
+  const { journeys, fetchNextPage, fetchPreviousPage, hasNextPage } =
+    useJourneys();
 
   const handleFetchNextPage = async () => {
     await fetchNextPage();
@@ -54,8 +48,7 @@ const Station: NextPage = () => {
   };
 
   const filteredJourneys = journeys?.pages[currentPage]?.items;
-  const hasPreviousResults = currentPage !== 0;
-  const hasNextResults = journeys?.pages[currentPage]?.nextCursor;
+  const hasPreviousPage = currentPage !== 0;
 
   const headerRow: React.FC<{
     filter: FilterOptions;
@@ -142,9 +135,9 @@ const Station: NextPage = () => {
           </tbody>
         </table>
 
-        {(hasPreviousResults || hasNextResults) && (
+        {(hasPreviousPage || hasNextPage) && (
           <div className="mt-5 flex justify-between">
-            {hasPreviousResults && (
+            {hasPreviousPage && (
               <button
                 className="group flex items-center"
                 onClick={handleFetchPreviousPage}
@@ -153,7 +146,7 @@ const Station: NextPage = () => {
                 <span className="group-link">Previous</span>
               </button>
             )}
-            {hasNextResults && (
+            {hasNextPage && (
               <button
                 className="group ml-auto flex items-center"
                 onClick={handleFetchNextPage}

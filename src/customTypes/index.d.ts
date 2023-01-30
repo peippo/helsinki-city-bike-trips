@@ -8,7 +8,7 @@ type StationData = Prisma.StationGetPayload<typeof StationData>;
 
 type TrafficModes = "arrival" | "departure";
 
-type TooltipTypes = "station" | "traffic" | "journey";
+type TooltipTypes = "station" | "traffic" | "journey" | "journey-details";
 
 type TrafficData = {
   arrival: {

@@ -1,12 +1,14 @@
 import { trpc } from "@utils/trpc";
 import { atom, useAtom } from "jotai";
-import { IconLayer, ArcLayer } from "@deck.gl/layers/typed";
+import { IconLayer, ArcLayer, LineLayer } from "@deck.gl/layers/typed";
 import { HexagonLayer } from "@deck.gl/aggregation-layers/typed";
 import useSingleStation from "@hooks/useSingleStation";
 import { useRouter } from "next/router";
 import { trafficModeAtom } from "@pages/stations/[stationId]";
 import type { StationData, TooltipTypes } from "customTypes";
 import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
+import useJourneys from "./useJourneys";
+import { currentPageAtom } from "@pages/journeys";
 
 export const hoverInfoAtom = atom<{
   type: TooltipTypes;
@@ -18,14 +20,22 @@ export const mapHoverAtom = atom<number | null>(null);
 const useMapLayers = () => {
   const { data: stations } = trpc.station.getAll.useQuery();
   const { selectedStation, trafficData } = useSingleStation();
-  const [, setHoverInfo] = useAtom(hoverInfoAtom);
+  const [currentPage] = useAtom(currentPageAtom);
+  const { journeys } = useJourneys();
+  const [hoverInfo, setHoverInfo] = useAtom(hoverInfoAtom);
   const [trafficZone, setTrafficZone] = useAtom(trafficZoneAtom);
   const [trafficMode] = useAtom(trafficModeAtom);
   const [hoverId, setHoverId] = useAtom(mapHoverAtom);
   const router = useRouter();
 
+  const isJourneys = router.pathname.includes("journeys");
+
+  //////////////
+  // Stations //
+  //////////////
+
   const stationsLayer = new IconLayer({
-    id: "stations-icon-layer",
+    id: "stations-layer",
     data: stations,
     pickable: true,
     iconAtlas: "/marker-atlas.png",
@@ -37,7 +47,7 @@ const useMapLayers = () => {
       (station) => station.stationId === hoverId
     ),
     updateTriggers: {
-      getIcon: selectedStation && trafficMode,
+      getIcon: [selectedStation, trafficMode, router.pathname],
     },
     getPosition: (station: StationData) => [
       station.longitude,
@@ -53,7 +63,7 @@ const useMapLayers = () => {
             (destination) => destination.arrival.stationId === station.stationId
           )
         ) {
-          return "departureStation";
+          return "arrivalStation";
         } else if (
           selectedStation &&
           trafficData[trafficMode].stations.some(
@@ -61,8 +71,10 @@ const useMapLayers = () => {
               destination.departure.stationId === station.stationId
           )
         ) {
-          return "arrivalStation";
+          return "departureStation";
         }
+      } else if (isJourneys) {
+        return "stationDark";
       }
 
       return "station";
@@ -73,15 +85,19 @@ const useMapLayers = () => {
       setHoverId(info.object ? info.object?.stationId : null);
     },
     onClick: (info) => {
-      router.push(`/stations/${info.object.stationId}`);
+      isJourneys
+        ? setHoverId(info.object.stationId)
+        : router.push(`/stations/${info.object.stationId}`);
     },
   });
 
   const topJourneysLayer = new ArcLayer({
-    id: "arc-layer",
+    id: "top-journeys-layer",
     data: trafficData[trafficMode]?.stations,
     pickable: true,
     getWidth: 5,
+    autoHighlight: true,
+    highlightColor: [240, 204, 21],
     getPolygonOffset: () => [200, 0],
     getSourcePosition: (d) => d.departure.coordinates,
     getTargetPosition: (d) => d.arrival.coordinates,
@@ -91,8 +107,12 @@ const useMapLayers = () => {
       setHoverInfo({ type: "journey", info: info as PickingInfo }),
   });
 
+  /////////////
+  // Traffic //
+  /////////////
+
   const trafficLayer = new HexagonLayer({
-    id: "hexagon-layer",
+    id: "traffic-layer",
     data: stations,
     radius: 500,
     coverage: 0.9,
@@ -137,7 +157,71 @@ const useMapLayers = () => {
       ),
   });
 
-  return { stationsLayer, topJourneysLayer, trafficLayer };
+  //////////////
+  // Journeys //
+  //////////////
+
+  const journeysLayer = new ArcLayer({
+    id: "journeys-layer",
+    data: journeys?.pages[currentPage]?.items,
+    pickable: true,
+    autoHighlight: true,
+    highlightColor: [240, 204, 21],
+    updateTriggers: {
+      getWidth: hoverId,
+      getSourceColor: hoverId,
+      getTargetColor: hoverId,
+    },
+    getWidth: () => 5,
+    getSourcePosition: (d) => [
+      d.departureStation.longitude,
+      d.departureStation.latitude,
+    ],
+    getTargetPosition: (d) => [
+      d.arrivalStation.longitude,
+      d.arrivalStation.latitude,
+    ],
+    getSourceColor: () => [50, 140, 255],
+    getTargetColor: () => [200, 140, 255],
+    onHover: (info) =>
+      setHoverInfo({ type: "journey-details", info: info as PickingInfo }),
+  });
+
+  const journeysStationsLayer = new IconLayer({
+    id: "journeys-stations-layer",
+    data: stations,
+    iconAtlas: "/marker-atlas.png",
+    iconMapping: "/marker-atlas-mapping.json",
+    sizeScale: 1,
+    sizeMinPixels: 20,
+    updateTriggers: {
+      getIcon: hoverInfo,
+    },
+    getPosition: (station: StationData) => [
+      station.longitude,
+      station.latitude,
+    ],
+    getIcon: (station) => {
+      if (station.stationId === hoverInfo?.info?.object?.departureStationId) {
+        return "departureStation";
+      } else if (
+        station.stationId === hoverInfo?.info?.object?.arrivalStationId
+      ) {
+        return "arrivalStation";
+      } else {
+        return "stationDark";
+      }
+    },
+    getSize: (station: StationData) => station.capacity,
+  });
+
+  return {
+    stationsLayer,
+    topJourneysLayer,
+    trafficLayer,
+    journeysLayer,
+    journeysStationsLayer,
+  };
 };
 
 export default useMapLayers;

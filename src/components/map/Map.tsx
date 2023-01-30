@@ -8,20 +8,26 @@ import useAutoViewChange from "@hooks/useAutoViewChange";
 import useMapLayers, { hoverInfoAtom } from "@hooks/useMapLayers";
 import { mapStyle } from "@styles/map-style";
 import { mapEffects } from "./map-effects";
-import type { IconLayer, ArcLayer } from "@deck.gl/layers/typed";
+import type { IconLayer, ArcLayer, LineLayer } from "@deck.gl/layers/typed";
 import type { HexagonLayer } from "@deck.gl/aggregation-layers/typed";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 import Tooltip from "./Tooltip";
 
 const Map = () => {
-  const { stationsLayer, topJourneysLayer, trafficLayer } = useMapLayers();
+  const {
+    stationsLayer,
+    topJourneysLayer,
+    trafficLayer,
+    journeysLayer,
+    journeysStationsLayer,
+  } = useMapLayers();
   const { viewState, handleViewStateChange } = useMapViewState();
   const [hoverInfo] = useAtom(hoverInfoAtom);
   const router = useRouter();
   useAutoViewChange();
 
-  let activeLayers: Array<IconLayer | ArcLayer | HexagonLayer> = [];
+  let activeLayers: Array<IconLayer | ArcLayer | HexagonLayer | LineLayer> = [];
 
   switch (router.pathname) {
     case "/stations/[stationId]":
@@ -29,6 +35,9 @@ const Map = () => {
       break;
     case "/traffic":
       activeLayers = [trafficLayer];
+      break;
+    case "/journeys":
+      activeLayers = [journeysLayer, journeysStationsLayer];
       break;
     default:
       activeLayers = [stationsLayer];

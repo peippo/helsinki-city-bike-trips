@@ -1,3 +1,4 @@
+import { formatDistance, formatDuration } from "@utils/general";
 import type { AggregationSource, TooltipTypes } from "customTypes";
 import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
 
@@ -6,14 +7,14 @@ import {
   ForwardIcon,
   ArrivalsIcon,
   DeparturesIcon,
+  DistanceIcon,
+  DurationIcon,
 } from "../icons/Icons";
 
-type Props = {
+const Tooltip: React.FC<{
   type: TooltipTypes;
   info: PickingInfo;
-};
-
-const Tooltip: React.FC<Props> = ({ type, info }) => {
+}> = ({ type, info }) => {
   const totalArrivals = info.object?.points?.reduce(
     (sum: number, point: AggregationSource) =>
       (sum += point.source._count.arrivals),
@@ -50,6 +51,27 @@ const Tooltip: React.FC<Props> = ({ type, info }) => {
             <span>{info.object.departure.name}</span>
             <ForwardIcon width={15} className="text-yellow-500" />
             <span>{info.object.arrival.name}</span>
+          </div>
+        </>
+      )}
+      {type === "journey-details" && (
+        <>
+          <div className="flex flex-col items-center gap-2 text-sm">
+            <div className="flex items-center gap-2">
+              <span>{info.object.departureStation.name}</span>
+              <ForwardIcon width={15} className="text-yellow-500" />
+              <span>{info.object.arrivalStation.name}</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center">
+                <DistanceIcon width={18} className="mr-2 text-yellow-500" />
+                <span>{formatDistance(info.object.distance)}</span>
+              </div>
+              <div className="flex items-center">
+                <DurationIcon width={18} className="mr-2 text-yellow-500" />
+                <span>{formatDuration(info.object.duration)}</span>
+              </div>
+            </div>
           </div>
         </>
       )}

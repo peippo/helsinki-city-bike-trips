@@ -29,12 +29,14 @@ export const journeyRouter = router({
             select: {
               longitude: true,
               latitude: true,
+              name: true,
             },
           },
           departureStation: {
             select: {
               longitude: true,
               latitude: true,
+              name: true,
             },
           },
         },

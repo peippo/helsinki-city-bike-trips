@@ -18,7 +18,7 @@ const useAutoViewChange = () => {
         longitude,
         latitude,
         transitionDuration: 400,
-        zoom: state.zoom < 12 ? 13 : state.zoom,
+        zoom: (state.zoom as number) < 12 ? 13 : (state.zoom as number),
       }));
     };
 
