@@ -2,6 +2,7 @@ import Head from "next/head";
 import { atom, useAtom } from "jotai";
 import classNames from "classnames";
 import { formatDistance, formatDateTime, formatDuration } from "@utils/general";
+import { mapHoverAtom } from "@hooks/useMapLayers";
 import type { NextPage } from "next";
 
 import SidePanel from "@components/SidePanel";
@@ -24,6 +25,7 @@ const Station: NextPage = () => {
   const [currentFilter, setCurrentFilter] = useAtom(filterAtom);
   const [orderBy, setOrderBy] = useAtom(orderByAtom);
   const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
+  const [, setHoverId] = useAtom(mapHoverAtom);
 
   const { journeys, fetchNextPage, fetchPreviousPage, hasNextPage } =
     useJourneys();
@@ -120,7 +122,12 @@ const Station: NextPage = () => {
           </thead>
           <tbody className="text-sm">
             {filteredJourneys?.map((journey) => (
-              <tr key={journey.id}>
+              <tr
+                key={journey.id}
+                onMouseEnter={() => setHoverId(journey.id)}
+                onMouseLeave={() => setHoverId(null)}
+                className="hover:cursor-pointer hover:bg-yellow-500/20"
+              >
                 <td className="whitespace-nowrap">
                   <span>{formatDateTime(journey.departureTime)}</span>
                 </td>

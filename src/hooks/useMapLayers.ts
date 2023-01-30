@@ -15,7 +15,7 @@ export const hoverInfoAtom = atom<{
   info: PickingInfo;
 } | null>(null);
 export const trafficZoneAtom = atom<PickingInfo | null>(null);
-export const mapHoverAtom = atom<number | null>(null);
+export const mapHoverAtom = atom<number | string | null>(null);
 
 const useMapLayers = () => {
   const { data: stations } = trpc.station.getAll.useQuery();
@@ -29,6 +29,7 @@ const useMapLayers = () => {
   const router = useRouter();
 
   const isJourneys = router.pathname.includes("journeys");
+  const currentPageJourneys = journeys?.pages[currentPage]?.items;
 
   //////////////
   // Stations //
@@ -163,10 +164,13 @@ const useMapLayers = () => {
 
   const journeysLayer = new ArcLayer({
     id: "journeys-layer",
-    data: journeys?.pages[currentPage]?.items,
+    data: currentPageJourneys,
     pickable: true,
     autoHighlight: true,
     highlightColor: [240, 204, 21],
+    highlightedObjectIndex: currentPageJourneys?.findIndex(
+      (journey) => journey.id === hoverId
+    ),
     updateTriggers: {
       getWidth: hoverId,
       getSourceColor: hoverId,
@@ -183,8 +187,10 @@ const useMapLayers = () => {
     ],
     getSourceColor: () => [50, 140, 255],
     getTargetColor: () => [200, 140, 255],
-    onHover: (info) =>
-      setHoverInfo({ type: "journey-details", info: info as PickingInfo }),
+    onHover: (info) => {
+      setHoverInfo({ type: "journey-details", info: info as PickingInfo });
+      setHoverId(info.object?.id);
+    },
   });
 
   const journeysStationsLayer = new IconLayer({
@@ -195,17 +201,31 @@ const useMapLayers = () => {
     sizeScale: 1,
     sizeMinPixels: 20,
     updateTriggers: {
-      getIcon: hoverInfo,
+      getIcon: [hoverInfo, hoverId],
     },
     getPosition: (station: StationData) => [
       station.longitude,
       station.latitude,
     ],
     getIcon: (station) => {
-      if (station.stationId === hoverInfo?.info?.object?.departureStationId) {
+      const hoveredJourney = hoverInfo?.info?.object;
+
+      const hoveredListJourney = currentPageJourneys?.find(
+        (j) => j.id === hoverId
+      );
+      const hoveredListJourneyStationIds = {
+        departureStationId: hoveredListJourney?.departureStationId,
+        arrivalStationId: hoveredListJourney?.arrivalStationId,
+      };
+
+      if (
+        station.stationId === hoveredJourney?.departureStationId ||
+        station.stationId === hoveredListJourneyStationIds.departureStationId
+      ) {
         return "departureStation";
       } else if (
-        station.stationId === hoverInfo?.info?.object?.arrivalStationId
+        station.stationId === hoveredJourney?.arrivalStationId ||
+        station.stationId === hoveredListJourneyStationIds.arrivalStationId
       ) {
         return "arrivalStation";
       } else {
