@@ -1,14 +1,14 @@
 import { trpc } from "@utils/trpc";
-import { atom, useAtom } from "jotai";
-import { IconLayer, ArcLayer, LineLayer } from "@deck.gl/layers/typed";
-import { HexagonLayer } from "@deck.gl/aggregation-layers/typed";
-import useSingleStation from "@hooks/useSingleStation";
 import { useRouter } from "next/router";
+import { atom, useAtom } from "jotai";
+import { IconLayer, ArcLayer } from "@deck.gl/layers/typed";
+import { HexagonLayer } from "@deck.gl/aggregation-layers/typed";
 import { trafficModeAtom } from "@pages/stations/[stationId]";
-import type { StationData, TooltipTypes } from "customTypes";
-import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
-import useJourneys from "./useJourneys";
 import { currentPageAtom } from "@pages/journeys";
+import useSingleStation from "@hooks/useSingleStation";
+import useJourneys from "@hooks/useJourneys";
+import type { JourneyData, StationData, TooltipTypes } from "customTypes";
+import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
 
 export const hoverInfoAtom = atom<{
   type: TooltipTypes;
@@ -100,13 +100,13 @@ const useMapLayers = () => {
     autoHighlight: true,
     highlightColor: [240, 204, 21],
     highlightedObjectIndex: trafficData[trafficMode]?.stations?.findIndex(
-      (station) =>
-        station.arrival.stationId === hoverId ||
-        station.departure.stationId === hoverId
+      (journey: JourneyData) =>
+        journey.arrival.stationId === hoverId ||
+        journey.departure.stationId === hoverId
     ),
     getPolygonOffset: () => [200, 0],
-    getSourcePosition: (d) => d.departure.coordinates,
-    getTargetPosition: (d) => d.arrival.coordinates,
+    getSourcePosition: (journey: JourneyData) => journey.departure.coordinates,
+    getTargetPosition: (journey: JourneyData) => journey.arrival.coordinates,
     getSourceColor: () => [50, 140, 255],
     getTargetColor: () => [200, 140, 255],
     onHover: (info) => {
@@ -155,16 +155,16 @@ const useMapLayers = () => {
     onHover: (info) =>
       setHoverInfo({ type: "traffic", info: info as PickingInfo }),
     // FIXME: typings
-    getColorValue: (points: StationData[]) =>
-      points.reduce(
-        (sum: number, p: StationData) =>
-          (sum += p._count.arrivals + p._count.departures),
+    getColorValue: (stations: StationData[]) =>
+      stations.reduce(
+        (sum: number, station: StationData) =>
+          (sum += station._count.arrivals + station._count.departures),
         0
-      ) / points.length,
-    getElevationValue: (points: StationData[]) =>
-      points.reduce(
-        (sum: number, p: StationData) =>
-          (sum += p._count.arrivals + p._count.departures),
+      ) / stations.length,
+    getElevationValue: (stations: StationData[]) =>
+      stations.reduce(
+        (sum: number, station) =>
+          (sum += station._count.arrivals + station._count.departures),
         0
       ),
   });

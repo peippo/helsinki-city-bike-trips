@@ -8,6 +8,7 @@ import type { AggregationSource, StationData } from "customTypes";
 import SidePanel from "@components/SidePanel";
 import {
   ArrivalsIcon,
+  BikeIcon,
   CloseIcon,
   DeparturesIcon,
 } from "@components/icons/Icons";
@@ -25,6 +26,17 @@ const Station: NextPage = () => {
       (a._count.arrivals + a._count.departures)
   );
 
+  const zoneTotals = zoneStations?.reduce(
+    (totals, station) => {
+      return {
+        capacity: (totals.capacity += station.capacity),
+        arrivals: (totals.arrivals += station._count.arrivals),
+        departures: (totals.departures += station._count.departures),
+      };
+    },
+    { capacity: 0, arrivals: 0, departures: 0 }
+  );
+
   return (
     <>
       <Head>
@@ -33,7 +45,7 @@ const Station: NextPage = () => {
       {zoneStations && (
         <SidePanel width="wide">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-xl">Stations in the area</h2>
+            <h2 className="text-xl">Area details</h2>
             <button
               className="group flex items-center"
               onClick={() => setTrafficZone(null)}
@@ -42,6 +54,27 @@ const Station: NextPage = () => {
               <CloseIcon width={20} className=" text-yellow-500" />
             </button>
           </div>
+
+          <div className="mb-4 flex items-center">
+            <BikeIcon width={24} className="mr-2 text-yellow-500" />
+            <p>Total capacity {zoneTotals.capacity} bikes</p>
+          </div>
+
+          <div className="flex items-center justify-around border-t border-b border-cyan-800 bg-gradient-to-r from-transparent via-cyan-700/10 to-transparent py-3 text-sm">
+            <div className="flex">
+              <ArrivalsIcon width={22} className="mr-3 text-yellow-500" />
+              <p>{zoneTotals.arrivals} arrivals</p>
+            </div>
+            <div className="flex">
+              <DeparturesIcon width={22} className="mr-3 text-yellow-500" />
+              <p>{zoneTotals.departures} departures</p>
+            </div>
+          </div>
+
+          <h2 className="mt-6 mb-2 text-lg text-slate-400">
+            Stations in the area
+          </h2>
+
           <table className="w-full">
             <thead>
               <tr className="text-left text-yellow-400">
