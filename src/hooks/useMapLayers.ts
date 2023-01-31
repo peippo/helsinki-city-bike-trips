@@ -99,13 +99,24 @@ const useMapLayers = () => {
     getWidth: 5,
     autoHighlight: true,
     highlightColor: [240, 204, 21],
+    highlightedObjectIndex: trafficData[trafficMode]?.stations?.findIndex(
+      (station) =>
+        station.arrival.stationId === hoverId ||
+        station.departure.stationId === hoverId
+    ),
     getPolygonOffset: () => [200, 0],
     getSourcePosition: (d) => d.departure.coordinates,
     getTargetPosition: (d) => d.arrival.coordinates,
     getSourceColor: () => [50, 140, 255],
     getTargetColor: () => [200, 140, 255],
-    onHover: (info) =>
-      setHoverInfo({ type: "journey", info: info as PickingInfo }),
+    onHover: (info) => {
+      setHoverInfo({ type: "journey", info: info as PickingInfo });
+      setHoverId(
+        info?.object &&
+          info.object[trafficMode === "arrival" ? "departure" : "arrival"]
+            .stationId
+      );
+    },
   });
 
   /////////////
@@ -124,7 +135,6 @@ const useMapLayers = () => {
     elevationRange: [0, 1200],
     elevationScale: 5,
     opacity: 0.75,
-    highlightColor: [240, 204, 21],
     highlightedObjectIndex: trafficZone ? trafficZone.index : -1,
     colorRange: [
       [22, 90, 205],
@@ -132,6 +142,7 @@ const useMapLayers = () => {
       [122, 120, 225],
       [178, 140, 235],
       [248, 170, 255],
+      [240, 204, 80],
     ],
     autoHighlight: true,
     getColorWeight: (station) =>

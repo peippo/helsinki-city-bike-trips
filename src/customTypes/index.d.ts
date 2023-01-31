@@ -12,14 +12,14 @@ type TooltipTypes = "station" | "traffic" | "journey" | "journey-details";
 
 type TrafficData = {
   arrival: {
-    stations: JourneyPoints[];
+    stations: JourneyData[];
     averages: {
       distance: number;
       duration: number;
     };
   };
   departure: {
-    stations: JourneyPoints[];
+    stations: JourneyData[];
     averages: {
       distance: number;
       duration: number;
