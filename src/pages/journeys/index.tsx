@@ -6,12 +6,7 @@ import { mapHoverAtom } from "@hooks/useMapLayers";
 import type { NextPage } from "next";
 
 import SidePanel from "@components/SidePanel";
-import {
-  ArrowLeft,
-  ArrowRight,
-  SortDown,
-  SortUp,
-} from "@components/icons/Icons";
+import { ArrowLeft, ArrowRight, SortDown, SortUp } from "@components/Icons";
 import useJourneys from "@hooks/useJourneys";
 
 type FilterOptions = "departureTime" | "duration" | "distance";

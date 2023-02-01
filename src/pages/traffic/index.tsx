@@ -11,7 +11,7 @@ import {
   BikeIcon,
   CloseIcon,
   DeparturesIcon,
-} from "@components/icons/Icons";
+} from "@components/Icons";
 
 const Station: NextPage = () => {
   const [trafficZone, setTrafficZone] = useAtom(trafficZoneAtom);

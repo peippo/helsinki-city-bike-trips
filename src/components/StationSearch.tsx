@@ -1,6 +1,6 @@
-import React from "react";
 import { atom, useAtom } from "jotai";
-import { CircleTimesIcon, SearchLocationIcon } from "./icons/Icons";
+
+import { CircleTimesIcon, SearchLocationIcon } from "@components/Icons";
 
 export const searchValueAtom = atom("");
 

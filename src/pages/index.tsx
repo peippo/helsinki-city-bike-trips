@@ -7,7 +7,7 @@ import { mapHoverAtom } from "@hooks/useMapLayers";
 
 import { searchValueAtom } from "@components/StationSearch";
 import SidePanel from "@components/SidePanel";
-import { BikeIcon, PinSlashIcon } from "@components/icons/Icons";
+import { BikeIcon, PinSlashIcon } from "@components/Icons";
 import StationSearch from "@components/StationSearch";
 import ErrorMessage from "@components/ErrorMessage";
 

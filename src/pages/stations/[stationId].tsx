@@ -14,7 +14,7 @@ import {
   DeparturesIcon,
   DistanceIcon,
   DurationIcon,
-} from "@components/icons/Icons";
+} from "@components/Icons";
 import classNames from "classnames";
 import ErrorMessage from "@components/ErrorMessage";
 

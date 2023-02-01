@@ -7,12 +7,12 @@ import useMapViewState from "@hooks/useMapViewState";
 import useAutoViewChange from "@hooks/useAutoViewChange";
 import useMapLayers, { hoverInfoAtom } from "@hooks/useMapLayers";
 import { mapStyle } from "@styles/map-style";
-import { mapEffects } from "./map-effects";
+import { mapEffects } from "./mapEffects";
 import type { IconLayer, ArcLayer, LineLayer } from "@deck.gl/layers/typed";
 import type { HexagonLayer } from "@deck.gl/aggregation-layers/typed";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-import Tooltip from "./Tooltip";
+import Tooltip from "@components/Map/Tooltip";
 
 const Map = () => {
   const {

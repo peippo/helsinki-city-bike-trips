@@ -1,4 +1,4 @@
-import { ExlamationIcon } from "./icons/Icons";
+import { ExlamationIcon } from "@components/Icons";
 
 const ErrorMessage: React.FC<{ message: string }> = ({ message }) => {
   return (

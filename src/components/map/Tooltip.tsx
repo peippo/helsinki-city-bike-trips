@@ -9,7 +9,7 @@ import {
   DeparturesIcon,
   DistanceIcon,
   DurationIcon,
-} from "../icons/Icons";
+} from "@components/Icons";
 
 const Tooltip: React.FC<{
   type: TooltipTypes;
