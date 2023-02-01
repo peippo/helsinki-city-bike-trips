@@ -1,6 +1,6 @@
 import { formatDistance, formatDuration } from "@utils/general";
 import type { AggregationSource, TooltipTypes } from "customTypes";
-import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
+import type { PickingInfo } from "@deck.gl/core/typed";
 
 import {
   BikeIcon,

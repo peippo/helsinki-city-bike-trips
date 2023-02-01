@@ -1,9 +1,12 @@
 import { atom, useAtom } from "jotai";
 import { FlyToInterpolator } from "@deck.gl/core/typed";
-import type { ViewStateChangeParameters } from "@deck.gl/core/src/controllers/controller";
 
 const LONGITUDE_RANGE: readonly [number, number] = [24.65, 25.19];
 const LATITUDE_RANGE: readonly [number, number] = [60.1, 60.3];
+
+type ViewStateChangeParameters = {
+  viewState: Record<string, number>;
+};
 
 const viewAtom = atom<Record<string, number | FlyToInterpolator>>({
   longitude: 24.9235379,
@@ -28,11 +31,11 @@ const useMapViewState = () => {
       ...params.viewState,
       longitude: Math.min(
         LONGITUDE_RANGE[1],
-        Math.max(LONGITUDE_RANGE[0], params.viewState.longitude)
+        Math.max(LONGITUDE_RANGE[0], params.viewState.longitude as number)
       ),
       latitude: Math.min(
         LATITUDE_RANGE[1],
-        Math.max(LATITUDE_RANGE[0], params.viewState.latitude)
+        Math.max(LATITUDE_RANGE[0], params.viewState.latitude as number)
       ),
     };
 

@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { trpc } from "@utils/trpc";
 import { getPercent, getAvgKilometers, getAvgMinutes } from "@utils/general";
 import type { Journey, Station } from "@prisma/client";
-import type { JourneyData, TrafficData } from "customTypes";
+import type { StationsJourneyData, TrafficData } from "customTypes";
 
 /**
  * Fetch single station details and top 5 arrival/departure stations
@@ -116,7 +116,7 @@ const useSingleStation = () => {
               selectedStation.arrivals.length
             ),
           };
-        }) as JourneyData[],
+        }) as StationsJourneyData[],
       },
       departure: {
         averages: {
@@ -161,7 +161,7 @@ const useSingleStation = () => {
               selectedStation.departures.length
             ),
           };
-        }) as JourneyData[],
+        }) as StationsJourneyData[],
       },
     };
   }, [selectedStation, stations]);

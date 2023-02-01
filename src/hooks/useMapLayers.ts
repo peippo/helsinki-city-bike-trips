@@ -8,7 +8,7 @@ import { currentPageAtom } from "@pages/journeys";
 import useSingleStation from "@hooks/useSingleStation";
 import useJourneys from "@hooks/useJourneys";
 import type { JourneyData, StationData, TooltipTypes } from "customTypes";
-import type { PickingInfo } from "@deck.gl/core/src/lib/picking/pick-info";
+import type { PickingInfo } from "@deck.gl/core/typed";
 
 export const hoverInfoAtom = atom<{
   type: TooltipTypes;
