@@ -16,15 +16,31 @@ export const stationRouter = router({
     });
   }),
   getSingle: publicProcedure
-    .input(z.object({ stationId: z.number() }))
+    .input(z.object({ stationId: z.number(), month: z.number().min(4).max(9) }))
     .query(({ ctx, input }) => {
+      const { stationId, month } = input;
+
       return ctx.prisma.station.findUnique({
         where: {
-          stationId: input.stationId,
+          stationId: stationId,
         },
         include: {
-          departures: true,
-          arrivals: true,
+          departures: {
+            where: {
+              departureTime: {
+                gte: new Date(`2021-${month}-01`),
+                lte: new Date(`2021-${month}-31`),
+              },
+            },
+          },
+          arrivals: {
+            where: {
+              departureTime: {
+                gte: new Date(`2021-${month}-01`),
+                lte: new Date(`2021-${month}-31`),
+              },
+            },
+          },
         },
       });
     }),

@@ -4,6 +4,7 @@ import type { NextFont } from "@next/font/dist/types";
 
 import Map from "@components/Map/Map";
 import MainNav from "@components/MainNav";
+import MonthSelector from "./MonthSelector";
 
 type Props = {
   children: React.ReactNode;
@@ -25,6 +26,7 @@ const Layout: React.FC<Props> = ({ children, font }) => {
         )}
       >
         <MainNav />
+        <MonthSelector />
         {children}
         <Map />
       </main>

@@ -4,6 +4,8 @@ import { trpc } from "@utils/trpc";
 import { getPercent, getAvgKilometers, getAvgMinutes } from "@utils/general";
 import type { Journey, Station } from "@prisma/client";
 import type { StationsJourneyData, TrafficData } from "customTypes";
+import { useAtom } from "jotai";
+import { selectedMonthAtom } from "@components/MonthSelector";
 
 /**
  * Fetch single station details and top 5 arrival/departure stations
@@ -11,10 +13,12 @@ import type { StationsJourneyData, TrafficData } from "customTypes";
 const useSingleStation = () => {
   const router = useRouter();
   const { stationId } = router.query;
+  const [selectedMonth] = useAtom(selectedMonthAtom);
   const { data: stations } = trpc.station.getAll.useQuery();
   const { data: selectedStation, status } = trpc.station.getSingle.useQuery(
     {
       stationId: parseInt(stationId as string),
+      month: selectedMonth,
     },
     { enabled: !!stationId }
   );

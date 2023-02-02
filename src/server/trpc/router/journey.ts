@@ -7,16 +7,23 @@ export const journeyRouter = router({
       z.object({
         orderBy: z.enum(["distance", "duration", "departureTime"]),
         sortOrder: z.enum(["asc", "desc"]),
+        month: z.number().min(4).max(9),
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.string().nullish(),
       })
     )
     .query(async ({ ctx, input }) => {
       const limit = input.limit ?? 50;
-      const { cursor, orderBy, sortOrder } = input;
+      const { cursor, orderBy, sortOrder, month } = input;
 
       const items = await ctx.prisma.journey.findMany({
         take: limit + 1,
+        where: {
+          departureTime: {
+            gte: new Date(`2021-${month}-01`),
+            lte: new Date(`2021-${month}-31`),
+          },
+        },
         select: {
           id: true,
           departureTime: true,
