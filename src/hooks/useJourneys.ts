@@ -1,14 +1,14 @@
 import { trpc } from "@utils/trpc";
 import { useAtom } from "jotai";
-import { filterAtom, orderByAtom } from "@pages/journeys";
+import { orderByAtom, sortOrderAtom } from "@pages/journeys";
 
 // FIXME:
 // Redundant hook, figure out why accessing the cached getBatch query data
 // does not work via TRPC's useContext & getInfiniteData helper
 
 const useJourneys = () => {
-  const [currentFilter] = useAtom(filterAtom);
   const [orderBy] = useAtom(orderByAtom);
+  const [sortOrder] = useAtom(sortOrderAtom);
 
   const {
     data: journeys,
@@ -16,7 +16,11 @@ const useJourneys = () => {
     fetchPreviousPage,
     hasNextPage,
   } = trpc.journey.getBatch.useInfiniteQuery(
-    { limit: 30, filter: currentFilter, orderBy: orderBy },
+    {
+      limit: 30,
+      orderBy: orderBy,
+      sortOrder: sortOrder,
+    },
     { getNextPageParam: (lastPage) => lastPage.nextCursor }
   );
 

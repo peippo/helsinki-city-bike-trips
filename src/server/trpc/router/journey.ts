@@ -5,15 +5,15 @@ export const journeyRouter = router({
   getBatch: publicProcedure
     .input(
       z.object({
-        filter: z.enum(["distance", "duration", "departureTime"]),
-        orderBy: z.enum(["asc", "desc"]),
+        orderBy: z.enum(["distance", "duration", "departureTime"]),
+        sortOrder: z.enum(["asc", "desc"]),
         limit: z.number().min(1).max(100).nullish(),
         cursor: z.string().nullish(),
       })
     )
     .query(async ({ ctx, input }) => {
       const limit = input.limit ?? 50;
-      const { cursor, filter, orderBy } = input;
+      const { cursor, orderBy, sortOrder } = input;
 
       const items = await ctx.prisma.journey.findMany({
         take: limit + 1,
@@ -42,7 +42,7 @@ export const journeyRouter = router({
         },
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: {
-          [filter]: orderBy,
+          [orderBy]: sortOrder,
         },
       });
 

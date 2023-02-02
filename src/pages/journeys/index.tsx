@@ -9,16 +9,16 @@ import SidePanel from "@components/SidePanel";
 import { ArrowLeft, ArrowRight, SortDown, SortUp } from "@components/Icons";
 import useJourneys from "@hooks/useJourneys";
 
-type FilterOptions = "departureTime" | "duration" | "distance";
-type OrderByOptions = "asc" | "desc";
+type OrderByOptions = "departureTime" | "duration" | "distance";
+type SortOrderOptions = "asc" | "desc";
 
-export const filterAtom = atom<FilterOptions>("departureTime");
-export const orderByAtom = atom<OrderByOptions>("asc");
+export const orderByAtom = atom<OrderByOptions>("departureTime");
+export const sortOrderAtom = atom<SortOrderOptions>("asc");
 export const currentPageAtom = atom<number>(0);
 
 const Station: NextPage = () => {
-  const [currentFilter, setCurrentFilter] = useAtom(filterAtom);
-  const [orderBy, setOrderBy] = useAtom(orderByAtom);
+  const [currentOrderBy, setCurrentOrderBy] = useAtom(orderByAtom);
+  const [sortOrder, setSortOrder] = useAtom(sortOrderAtom);
   const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
   const [, setHoverId] = useAtom(mapHoverAtom);
 
@@ -35,11 +35,11 @@ const Station: NextPage = () => {
     setCurrentPage((prev) => prev - 1);
   };
 
-  const handleFilterClick = (filter: FilterOptions) => {
-    if (currentFilter === filter) {
-      setOrderBy(orderBy === "asc" ? "desc" : "asc");
+  const handleOrderByClick = (orderBy: OrderByOptions) => {
+    if (currentOrderBy === orderBy) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
-      setCurrentFilter(filter);
+      setCurrentOrderBy(orderBy);
     }
     setCurrentPage(0);
   };
@@ -48,10 +48,10 @@ const Station: NextPage = () => {
   const hasPreviousPage = currentPage !== 0;
 
   const headerRow: React.FC<{
-    filter: FilterOptions;
+    orderBy: OrderByOptions;
     text: string;
     align: "left" | "right";
-  }> = ({ filter, text, align }) => {
+  }> = ({ orderBy, text, align }) => {
     return (
       <th className={`text-${align}`}>
         <button
@@ -59,14 +59,14 @@ const Station: NextPage = () => {
             "flex items-center",
             align === "left" ? "mr-auto" : "ml-auto"
           )}
-          onClick={() => handleFilterClick(filter)}
+          onClick={() => handleOrderByClick(orderBy)}
         >
           <span className="text-sm lg:text-base">{text}</span>
           <div className="relative h-4 w-3">
             <SortUp
               className={classNames(
                 "absolute ml-2",
-                filter === currentFilter && orderBy === "asc"
+                orderBy === currentOrderBy && sortOrder === "asc"
                   ? "text-yellow-500"
                   : "text-slate-600"
               )}
@@ -75,7 +75,7 @@ const Station: NextPage = () => {
             <SortDown
               className={classNames(
                 "absolute ml-2",
-                filter === currentFilter && orderBy === "desc"
+                orderBy === currentOrderBy && sortOrder === "desc"
                   ? "text-yellow-500"
                   : "text-slate-600"
               )}
@@ -99,17 +99,17 @@ const Station: NextPage = () => {
           <thead>
             <tr className="text-yellow-400">
               {headerRow({
-                filter: "departureTime",
+                orderBy: "departureTime",
                 text: "Departure",
                 align: "left",
               })}
               {headerRow({
-                filter: "duration",
+                orderBy: "duration",
                 text: "Duration",
                 align: "right",
               })}
               {headerRow({
-                filter: "distance",
+                orderBy: "distance",
                 text: "Distance",
                 align: "right",
               })}
