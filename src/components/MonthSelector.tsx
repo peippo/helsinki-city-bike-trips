@@ -1,5 +1,7 @@
 import { atom, useAtom } from "jotai";
+import { useRouter } from "next/router";
 import { currentPageAtom } from "@pages/journeys";
+import classNames from "classnames";
 
 export const selectedMonthAtom = atom(4);
 
@@ -10,6 +12,7 @@ const BgMask = () => {
 };
 
 const MonthSelector = () => {
+  const router = useRouter();
   const [selectedMonth, setSelectedMonth] = useAtom(selectedMonthAtom);
   const [, setCurrentPage] = useAtom(currentPageAtom);
 
@@ -51,9 +54,16 @@ const MonthSelector = () => {
     setCurrentPage(0);
   };
 
+  const isHidden = router.route === "/";
+
   return (
     <>
-      <fieldset className="absolute bottom-0 left-1/2 z-40 flex -translate-x-1/2 items-center rounded-t-md border-l border-r border-t border-cyan-800 bg-slate-900 bg-opacity-70 px-2.5 pt-1.5 pb-2 backdrop-blur-lg md:rounded-t-lg md:p-3">
+      <fieldset
+        className={classNames(
+          "absolute bottom-0 left-1/2 z-40 flex h-10 -translate-x-1/2 items-center rounded-t-md border-l border-r border-t border-cyan-800 bg-slate-900 bg-opacity-70 px-2.5 pt-1.5 pb-2 backdrop-blur-lg transition-all duration-700 md:h-14 md:rounded-t-lg md:p-3",
+          isHidden ? "-bottom-10 md:-bottom-14" : ""
+        )}
+      >
         <legend className="sr-only">Filter by month</legend>
 
         <div className="flex gap-2">
@@ -64,21 +74,27 @@ const MonthSelector = () => {
               <div key={id}>
                 <input
                   name="month-filter"
-                  className="peer hidden"
+                  className="peer sr-only"
                   value={number}
                   id={id}
                   type="radio"
                   checked={number === selectedMonth}
                   onChange={() => handleMonthClick(number)}
+                  tabIndex={isHidden ? -1 : 0}
                 />
                 <label
                   htmlFor={id}
-                  className="inline-flex w-full cursor-pointer items-center justify-between rounded px-3 py-1 text-slate-400 hover:text-slate-200 peer-checked:bg-yellow-500 peer-checked:text-slate-900 md:rounded-lg md:px-4"
+                  className={classNames(
+                    "inline-flex w-full cursor-pointer items-center justify-between rounded px-3 py-1 text-slate-400  hover:text-slate-200 md:rounded-lg md:px-4",
+                    "outline-offset-2 peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-focus-visible:outline peer-focus-visible:outline-yellow-600"
+                  )}
                 >
-                  <span className="text-xs md:hidden">
+                  <span className="text-xs md:text-base">
                     {name.substring(0, 3)}
+                    <span className="hidden md:inline">
+                      {name.substring(3)}
+                    </span>
                   </span>
-                  <span className="hidden md:inline">{name}</span>
                 </label>
               </div>
             );
