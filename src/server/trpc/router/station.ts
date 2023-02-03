@@ -28,16 +28,16 @@ export const stationRouter = router({
           departures: {
             where: {
               departureTime: {
-                gte: new Date(`2021-${month}-01`),
-                lte: new Date(`2021-${month}-31`),
+                gte: new Date(`2021-${month}`),
+                lte: new Date(`2021-${month + 1}`),
               },
             },
           },
           arrivals: {
             where: {
               departureTime: {
-                gte: new Date(`2021-${month}-01`),
-                lte: new Date(`2021-${month}-31`),
+                gte: new Date(`2021-${month}`),
+                lte: new Date(`2021-${month + 1}`),
               },
             },
           },

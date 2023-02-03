@@ -20,8 +20,8 @@ export const journeyRouter = router({
         take: limit + 1,
         where: {
           departureTime: {
-            gte: new Date(`2021-${month}-01`),
-            lte: new Date(`2021-${month}-31`),
+            gte: new Date(`2021-${month}`),
+            lte: new Date(`2021-${month + 1}`),
           },
         },
         select: {
