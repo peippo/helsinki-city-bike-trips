@@ -1,4 +1,5 @@
 import { trpc } from "@utils/trpc";
+import { useRouter } from "next/router";
 import { useAtom } from "jotai";
 import { orderByAtom, sortOrderAtom } from "@pages/journeys";
 import { selectedMonthAtom } from "@components/MonthSelector";
@@ -8,6 +9,7 @@ import { selectedMonthAtom } from "@components/MonthSelector";
 // does not work via TRPC's useContext & getInfiniteData helper
 
 const useJourneys = () => {
+  const router = useRouter();
   const [selectedMonth] = useAtom(selectedMonthAtom);
   const [orderBy] = useAtom(orderByAtom);
   const [sortOrder] = useAtom(sortOrderAtom);
@@ -24,7 +26,10 @@ const useJourneys = () => {
       sortOrder: sortOrder,
       month: selectedMonth,
     },
-    { getNextPageParam: (lastPage) => lastPage.nextCursor }
+    {
+      enabled: router.route === "/journeys",
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    }
   );
 
   return { journeys, fetchNextPage, fetchPreviousPage, hasNextPage };

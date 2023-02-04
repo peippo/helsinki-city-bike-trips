@@ -1,8 +1,8 @@
 import Head from "next/head";
-import { atom, useAtom } from "jotai";
 import classNames from "classnames";
+import { atom, useAtom } from "jotai";
 import { formatDistance, formatDateTime, formatDuration } from "@utils/general";
-import { mapHoverAtom } from "@hooks/useMapLayers";
+import { mapHoverAtom } from "@components/Map/Map";
 import type { NextPage } from "next";
 
 import SidePanel from "@components/SidePanel";

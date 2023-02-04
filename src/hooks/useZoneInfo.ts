@@ -1,6 +1,6 @@
 import { trpc } from "@utils/trpc";
 import { useAtom } from "jotai";
-import { trafficZoneAtom } from "@hooks/useMapLayers";
+import { trafficZoneAtom } from "@hooks/MapLayers/useTrafficLayers";
 import type { TrafficAggregationSource, StationTraffic } from "customTypes";
 
 /**

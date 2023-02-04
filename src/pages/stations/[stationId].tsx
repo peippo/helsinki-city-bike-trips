@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { atom, useAtom } from "jotai";
 import useSingleStation from "@hooks/useSingleStation";
-import { mapHoverAtom } from "@hooks/useMapLayers";
+import { mapHoverAtom } from "@components/Map/Map";
 import type { TrafficModes } from "customTypes";
 
 import SidePanel from "@components/SidePanel";

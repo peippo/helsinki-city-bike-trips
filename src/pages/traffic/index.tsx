@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useAtom } from "jotai";
-import { trafficZoneAtom } from "@hooks/useMapLayers";
+import { trafficZoneAtom } from "@hooks/MapLayers/useTrafficLayers";
 import type { NextPage } from "next";
 import type { StationTraffic } from "customTypes";
 

@@ -1,9 +1,9 @@
-import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { trpc } from "@utils/trpc";
 import { useAtom } from "jotai";
-import { mapHoverAtom } from "@hooks/useMapLayers";
+import { mapHoverAtom } from "@components/Map/Map";
+import type { NextPage } from "next";
 
 import { searchValueAtom } from "@components/StationSearch";
 import SidePanel from "@components/SidePanel";
