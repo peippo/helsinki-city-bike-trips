@@ -16,10 +16,14 @@ const useTrafficLayers = () => {
   const [trafficZone, setTrafficZone] = useAtom(trafficZoneAtom);
   const router = useRouter();
   const { data: stations } = trpc.station.getAll.useQuery();
-  const { data: traffic } = trpc.station.getTrafficCounts.useQuery(
-    { month: selectedMonth },
-    { enabled: router.route === "/traffic" }
-  );
+  const { data: traffic, isPlaceholderData } =
+    trpc.station.getTrafficCounts.useQuery(
+      { month: selectedMonth },
+      {
+        enabled: router.route === "/traffic",
+        keepPreviousData: true,
+      }
+    );
 
   const trafficLayer = new HexagonLayer({
     id: "traffic-layer",
@@ -44,8 +48,16 @@ const useTrafficLayers = () => {
     ],
     autoHighlight: true,
     transitions: {
-      getElevationValue: 500,
-      getColorValue: 500,
+      getElevationValue: {
+        type: "spring",
+        stiffness: 0.05,
+        damping: 0.4,
+        enter: () => 0,
+      },
+      getColorValue: {
+        type: "spring",
+        enter: () => [15, 23, 42],
+      },
     },
     getColorWeight: (station: StationTraffic) =>
       station._count.arrivals + station._count.departures,

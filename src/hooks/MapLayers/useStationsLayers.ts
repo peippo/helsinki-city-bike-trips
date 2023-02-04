@@ -22,14 +22,22 @@ const useStationsLayers = () => {
     pickable: true,
     iconAtlas: "/marker-atlas.png",
     iconMapping: "/marker-atlas-mapping.json",
-    sizeScale: 1,
-    sizeMinPixels: 20,
+    sizeScale: 1.3,
+    sizeMaxPixels: 35,
     autoHighlight: true,
     highlightedObjectIndex: stations?.findIndex(
       (station) => station.stationId === hoverId
     ),
     updateTriggers: {
       getIcon: [selectedStation, trafficMode, router.pathname],
+    },
+    transitions: {
+      getSize: {
+        type: "spring",
+        stiffness: 0.05,
+        damping: 0.2,
+        enter: () => 0,
+      },
     },
     getPosition: (station: Station) => [station.longitude, station.latitude],
     getIcon: (station: Station) => {

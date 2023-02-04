@@ -51,10 +51,18 @@ const useJourneysLayers = () => {
     data: stations,
     iconAtlas: "/marker-atlas.png",
     iconMapping: "/marker-atlas-mapping.json",
-    sizeScale: 1,
-    sizeMinPixels: 20,
+    sizeScale: 1.3,
+    sizeMaxPixels: 35,
     updateTriggers: {
       getIcon: [hoverInfo, hoverId],
+    },
+    transitions: {
+      getSize: {
+        type: "spring",
+        stiffness: 0.05,
+        damping: 0.2,
+        enter: () => 0,
+      },
     },
     getPosition: (station: Station) => [station.longitude, station.latitude],
     getSize: (station: Station) => station.capacity,
