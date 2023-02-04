@@ -3,11 +3,16 @@ import { Prisma } from "@prisma/client";
 type TrafficModes = "arrival" | "departure";
 type TooltipTypes = "station" | "traffic" | "journey" | "journey-details";
 
-const StationData = Prisma.validator<Prisma.StationArgs>()({
-  include: { _count: { select: { departures: true, arrivals: true } } },
+const StationTrafficCounts = Prisma.validator<Prisma.StationArgs>()({
+  select: { _count: { select: { departures: true, arrivals: true } } },
 });
 
-type StationData = Prisma.StationGetPayload<typeof StationData>;
+const StationId = Prisma.validator<Prisma.StationArgs>()({
+  select: { stationId: true },
+});
+
+type StationTraffic = Prisma.StationGetPayload<typeof StationId> &
+  Prisma.StationGetPayload<typeof StationTrafficCounts> & { name?: string };
 
 type TrafficData = {
   arrival: {
@@ -44,6 +49,6 @@ type StationsJourneyData = JourneyData & {
   journeyPercentage: string;
 };
 
-type AggregationSource = {
-  source: StationData;
+type TrafficAggregationSource = {
+  source: StationTraffic;
 };

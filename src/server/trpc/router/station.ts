@@ -5,14 +5,6 @@ export const stationRouter = router({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.station.findMany({
       orderBy: { name: "asc" },
-      include: {
-        _count: {
-          select: {
-            departures: true,
-            arrivals: true,
-          },
-        },
-      },
     });
   }),
   getSingle: publicProcedure
@@ -26,18 +18,30 @@ export const stationRouter = router({
         },
         include: {
           departures: {
-            where: {
-              departureTime: {
-                gte: new Date(`2021-${month}`),
-                lte: new Date(`2021-${month + 1}`),
-              },
-            },
+            ...whereDepartureTimeIs(month),
           },
           arrivals: {
-            where: {
-              departureTime: {
-                gte: new Date(`2021-${month}`),
-                lte: new Date(`2021-${month + 1}`),
+            ...whereDepartureTimeIs(month),
+          },
+        },
+      });
+    }),
+  getTrafficCounts: publicProcedure
+    .input(z.object({ month: z.number().min(4).max(9) }))
+
+    .query(({ ctx, input }) => {
+      const { month } = input;
+
+      return ctx.prisma.station.findMany({
+        select: {
+          stationId: true,
+          _count: {
+            select: {
+              departures: {
+                ...whereDepartureTimeIs(month),
+              },
+              arrivals: {
+                ...whereDepartureTimeIs(month),
               },
             },
           },
@@ -45,3 +49,14 @@ export const stationRouter = router({
       });
     }),
 });
+
+const whereDepartureTimeIs = (month: number) => {
+  return {
+    where: {
+      departureTime: {
+        gte: new Date(`2021-${month}`),
+        lte: new Date(`2021-${month + 1}`),
+      },
+    },
+  };
+};

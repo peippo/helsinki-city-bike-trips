@@ -1,9 +1,9 @@
-import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useAtom } from "jotai";
 import { trafficZoneAtom } from "@hooks/useMapLayers";
-import type { AggregationSource, StationData } from "customTypes";
+import type { NextPage } from "next";
+import type { StationTraffic } from "customTypes";
 
 import SidePanel from "@components/SidePanel";
 import {
@@ -12,30 +12,11 @@ import {
   CloseIcon,
   DeparturesIcon,
 } from "@components/Icons";
+import useZoneInfo from "@hooks/useZoneInfo";
 
 const Station: NextPage = () => {
-  const [trafficZone, setTrafficZone] = useAtom(trafficZoneAtom);
-  const zoneStations: StationData[] = trafficZone?.object.points.map(
-    (z: AggregationSource) => z.source
-  );
-
-  zoneStations?.sort(
-    (a: StationData, b: StationData) =>
-      b._count.arrivals +
-      b._count.departures -
-      (a._count.arrivals + a._count.departures)
-  );
-
-  const zoneTotals = zoneStations?.reduce(
-    (totals, station) => {
-      return {
-        capacity: (totals.capacity += station.capacity),
-        arrivals: (totals.arrivals += station._count.arrivals),
-        departures: (totals.departures += station._count.departures),
-      };
-    },
-    { capacity: 0, arrivals: 0, departures: 0 }
-  );
+  const [, setTrafficZone] = useAtom(trafficZoneAtom);
+  const { zoneStations, zoneTotals } = useZoneInfo();
 
   return (
     <>
@@ -90,7 +71,7 @@ const Station: NextPage = () => {
               </tr>
             </thead>
             <tbody>
-              {zoneStations?.map((station: StationData) => (
+              {zoneStations?.map((station: StationTraffic) => (
                 <tr key={station.stationId}>
                   <td>
                     <Link

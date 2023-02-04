@@ -1,5 +1,5 @@
 import { formatDistance, formatDuration } from "@utils/general";
-import type { AggregationSource, TooltipTypes } from "customTypes";
+import type { TrafficAggregationSource, TooltipTypes } from "customTypes";
 import type { PickingInfo } from "@deck.gl/core/typed";
 
 import {
@@ -16,13 +16,13 @@ const Tooltip: React.FC<{
   info: PickingInfo;
 }> = ({ type, info }) => {
   const totalArrivals = info.object?.points?.reduce(
-    (sum: number, point: AggregationSource) =>
+    (sum: number, point: TrafficAggregationSource) =>
       (sum += point.source._count.arrivals),
     0
   );
 
   const totalDepartures = info.object?.points?.reduce(
-    (sum: number, point: AggregationSource) =>
+    (sum: number, point: TrafficAggregationSource) =>
       (sum += point.source._count.departures),
     0
   );

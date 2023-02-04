@@ -7,7 +7,9 @@ import { trafficModeAtom } from "@pages/stations/[stationId]";
 import { currentPageAtom } from "@pages/journeys";
 import useSingleStation from "@hooks/useSingleStation";
 import useJourneys from "@hooks/useJourneys";
-import type { JourneyData, StationData, TooltipTypes } from "customTypes";
+import { selectedMonthAtom } from "@components/MonthSelector";
+import type { Station } from "@prisma/client";
+import type { JourneyData, StationTraffic, TooltipTypes } from "customTypes";
 import type { PickingInfo } from "@deck.gl/core/typed";
 
 export const hoverInfoAtom = atom<{
@@ -18,7 +20,13 @@ export const trafficZoneAtom = atom<PickingInfo | null>(null);
 export const mapHoverAtom = atom<number | string | null>(null);
 
 const useMapLayers = () => {
+  const router = useRouter();
+  const [selectedMonth] = useAtom(selectedMonthAtom);
   const { data: stations } = trpc.station.getAll.useQuery();
+  const { data: traffic } = trpc.station.getTrafficCounts.useQuery(
+    { month: selectedMonth },
+    { enabled: router.route === "/traffic" }
+  );
   const { selectedStation, trafficData } = useSingleStation();
   const [currentPage] = useAtom(currentPageAtom);
   const { journeys } = useJourneys();
@@ -26,7 +34,6 @@ const useMapLayers = () => {
   const [trafficZone, setTrafficZone] = useAtom(trafficZoneAtom);
   const [trafficMode] = useAtom(trafficModeAtom);
   const [hoverId, setHoverId] = useAtom(mapHoverAtom);
-  const router = useRouter();
 
   const isJourneys = router.pathname.includes("journeys");
   const currentPageJourneys = journeys?.pages[currentPage]?.items;
@@ -50,11 +57,8 @@ const useMapLayers = () => {
     updateTriggers: {
       getIcon: [selectedStation, trafficMode, router.pathname],
     },
-    getPosition: (station: StationData) => [
-      station.longitude,
-      station.latitude,
-    ],
-    getIcon: (station: StationData) => {
+    getPosition: (station: Station) => [station.longitude, station.latitude],
+    getIcon: (station: Station) => {
       if (selectedStation) {
         if (station.stationId === selectedStation.stationId) {
           return "selectedStation";
@@ -80,7 +84,7 @@ const useMapLayers = () => {
 
       return "station";
     },
-    getSize: (station: StationData) => station.capacity,
+    getSize: (station: Station) => station.capacity,
     onHover: (info) => {
       setHoverInfo({ type: "station", info: info as PickingInfo });
       setHoverId(info.object ? info.object?.stationId : null);
@@ -125,7 +129,7 @@ const useMapLayers = () => {
 
   const trafficLayer = new HexagonLayer({
     id: "traffic-layer",
-    data: stations,
+    data: traffic,
     radius: 500,
     coverage: 0.9,
     colorAggregation: "SUM",
@@ -145,9 +149,19 @@ const useMapLayers = () => {
       [240, 204, 80],
     ],
     autoHighlight: true,
-    getColorWeight: (station) =>
+    transitions: {
+      getElevationValue: 500,
+      getColorValue: 500,
+    },
+    getColorWeight: (station: StationTraffic) =>
       station._count.arrivals + station._count.departures,
-    getPosition: (station) => [station.longitude, station.latitude],
+    getPosition: (station) => {
+      const stationInfo = stations?.find(
+        (s) => s.stationId === station.stationId
+      ) as Station;
+
+      return [stationInfo.longitude, stationInfo.latitude];
+    },
     onClick: (info) =>
       trafficZone?.index !== info.index
         ? setTrafficZone(info as PickingInfo)
@@ -155,13 +169,15 @@ const useMapLayers = () => {
     onHover: (info) =>
       setHoverInfo({ type: "traffic", info: info as PickingInfo }),
     // FIXME: typings
-    getColorValue: (stations: StationData[]) =>
+    // @ts-ignore
+    getColorValue: (stations: StationTraffic[]) =>
       stations.reduce(
-        (sum: number, station: StationData) =>
+        (sum: number, station: StationTraffic) =>
           (sum += station._count.arrivals + station._count.departures),
         0
       ) / stations.length,
-    getElevationValue: (stations: StationData[]) =>
+    // @ts-ignore
+    getElevationValue: (stations: StationTraffic[]) =>
       stations.reduce(
         (sum: number, station) =>
           (sum += station._count.arrivals + station._count.departures),
@@ -214,10 +230,7 @@ const useMapLayers = () => {
     updateTriggers: {
       getIcon: [hoverInfo, hoverId],
     },
-    getPosition: (station: StationData) => [
-      station.longitude,
-      station.latitude,
-    ],
+    getPosition: (station: Station) => [station.longitude, station.latitude],
     getIcon: (station) => {
       const hoveredJourney = hoverInfo?.info?.object;
 
@@ -243,7 +256,7 @@ const useMapLayers = () => {
         return "stationDark";
       }
     },
-    getSize: (station: StationData) => station.capacity,
+    getSize: (station: Station) => station.capacity,
   });
 
   return {
