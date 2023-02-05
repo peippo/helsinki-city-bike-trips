@@ -51,7 +51,8 @@ yarn test
 
 ## TODO
 
-Improve the implementation to allow the use of the complete ~2.7 million trip data set. Seems it's not a great idea to do the average journey distance/duration calculations etc. on the fly in browser from a set of that size.
+- Update selected zone details on month change in Traffic view
+- Improve the general implementation to allow the use of the complete ~2.7 million trip data set. Seems it's not a great idea to do the average journey distance/duration calculations etc. on the fly in browser from a set of that size.
 
 ## Acknowledgements
 
