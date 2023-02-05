@@ -18,6 +18,15 @@ const Layout: React.FC<Props> = ({ children, font }) => {
         <title>Stations</title>
         <meta name="description" content="Helsinki City Bike Stations" />
         <link rel="icon" href="/favicon.ico" />
+        <meta
+          property="og:image"
+          content="https://helsinki-city-bike-trips.vercel.app/share.png"
+        />
+        <meta
+          property="twitter:image"
+          content="https://helsinki-city-bike-trips.vercel.app/share.png"
+        />
+        <meta property="twitter:card" content="summary_large_image" />
       </Head>
       <main
         className={classNames(
