@@ -45,12 +45,16 @@ const parserOptions: Options = {
   },
   onRecord: (value) => {
     if (
+      !value.departureStationId ||
+      !value.arrivalStationId ||
       !value.distance ||
       !value.duration ||
       value.distance < 10 ||
       value.duration < 10 ||
       value.departureStationId > 902 ||
-      value.arrivalStationId > 902
+      value.arrivalStationId > 902 ||
+      value.departureStationId === 754 ||
+      value.arrivalStationId === 754
     ) {
       return null;
     } else {
@@ -86,7 +90,7 @@ export async function seedJourneys(prisma: PrismaClient) {
   console.log("Starting journeys seeding");
 
   const journeys = await parseCSV(
-    path.resolve(__dirname, "../csv/journeys.csv"),
+    path.resolve(__dirname, "./journeys-every-100th.csv"),
     parserOptions
   );
 

@@ -73,7 +73,7 @@ export async function seedStations(prisma: PrismaClient) {
   console.log("Starting stations seeding");
 
   const stations = await parseCSV(
-    path.resolve(__dirname, "../csv/stations.csv"),
+    path.resolve(__dirname, "./stations.csv"),
     parserOptions
   );
 
