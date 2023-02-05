@@ -136,20 +136,20 @@ const Station: NextPage = () => {
                     <h2 className="mt-6 mb-2 text-lg text-slate-400">
                       Top {trafficMode} stations
                     </h2>
-                    {trafficData[trafficMode].stations.map(
-                      (station) =>
-                        station && (
-                          <ul
-                            className="mt-2"
-                            key={
-                              station[
-                                trafficMode === "arrival"
-                                  ? "departure"
-                                  : "arrival"
-                              ].stationId
-                            }
-                          >
-                            <li className="flex items-center justify-between gap-3">
+                    <ul className="mt-2">
+                      {trafficData[trafficMode].stations.map(
+                        (station) =>
+                          station && (
+                            <li
+                              className="my-2 flex items-center justify-between gap-3"
+                              key={
+                                station[
+                                  trafficMode === "arrival"
+                                    ? "departure"
+                                    : "arrival"
+                                ].stationId
+                              }
+                            >
                               <Link
                                 className="link"
                                 onMouseEnter={() =>
@@ -193,9 +193,9 @@ const Station: NextPage = () => {
                                 </span>
                               </div>
                             </li>
-                          </ul>
-                        )
-                    )}
+                          )
+                      )}
+                    </ul>
                   </div>
                 </>
               ) : (
