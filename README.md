@@ -1,28 +1,59 @@
-# Create T3 App
+<img src="https://helsinki-city-bike-trips.vercel.app/banner.png" alt="Banner image">
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+Explore a map of the Helsinki City Bike public bicycle system & the journeys taken.
 
-## What's next? How do I make an app with this?
+### <a href="https://helsinki-city-bike-trips.vercel.app/">Open the project</a>
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## Tech
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
-
+- [TypeScript](https://typescriptlang.org)
 - [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
+- [Deck.gl](https://deck.gl/)
 - [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
+- [Jotai](https://jotai.org/)
+- [Tailwind CSS](https://tailwindcss.com)
+- [Vitest](https://vitest.dev/)
+- [Playwright](https://playwright.dev/)
 
-## Learn More
+Vector map tiles from [National Land Survey of Finland](https://www.maanmittauslaitos.fi/karttakuvapalvelu/tekninen-kuvaus-vektoritiilet), styled with [Maputnik](https://maputnik.github.io/)
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+## Running locally
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+### DB
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+Start a Postgres database and seed it with the station data & a small set of trips from 2021 (every 100th trip)
 
-## How do I deploy this?
+```bash
+docker compose up
+npx prisma db push
+npx prisma db seed
+```
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+### App
+
+[Register for an API key](https://omatili.maanmittauslaitos.fi/user/new/avoimet-rajapintapalvelut) at the National Land Survey of Finland and add the key to `.env` (required for the Mapbox Vector Tiles)
+
+```bash
+cp .env-example .env
+yarn install
+yarn dev
+```
+
+### Tests
+
+Run Vitest & Playwright tests with or without a browser interface
+
+```bash
+yarn test:ui
+yarn test
+```
+
+## TODO
+
+Improve the implementation to allow the use of the complete ~2.7 million trip data set. Seems it's not a great idea to do the average journey distance/duration calculations etc. on the fly in browser from a set of that size.
+
+## Acknowledgements
+
+- [Bicycle station location](https://public-transport-hslhrt.opendata.arcgis.com/datasets/helsingin-ja-espoon-kaupunkipy%C3%B6r%C3%A4asemat-avoin/explore?location=60.214131%2C24.940115%2C10.87) and [journey](https://www.hsl.fi/en/hsl/open-data) data from Helsinki Region Transport HSL
+- Project bootstrapped with [create-t3-app](https://github.com/t3-oss/create-t3-app)
