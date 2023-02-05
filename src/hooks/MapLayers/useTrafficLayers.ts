@@ -16,14 +16,13 @@ const useTrafficLayers = () => {
   const [trafficZone, setTrafficZone] = useAtom(trafficZoneAtom);
   const router = useRouter();
   const { data: stations } = trpc.station.getAll.useQuery();
-  const { data: traffic, isPlaceholderData } =
-    trpc.station.getTrafficCounts.useQuery(
-      { month: selectedMonth },
-      {
-        enabled: router.route === "/traffic",
-        keepPreviousData: true,
-      }
-    );
+  const { data: traffic } = trpc.station.getTrafficCounts.useQuery(
+    { month: selectedMonth },
+    {
+      enabled: router.route === "/traffic",
+      keepPreviousData: true,
+    }
+  );
 
   const trafficLayer = new HexagonLayer({
     id: "traffic-layer",
