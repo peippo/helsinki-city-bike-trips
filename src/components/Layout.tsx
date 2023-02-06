@@ -5,6 +5,7 @@ import type { NextFont } from "@next/font/dist/types";
 import Map from "@components/Map/Map";
 import MainNav from "@components/MainNav";
 import MonthSelector from "./MonthSelector";
+import LoadingSpinner from "./LoadingSpinner";
 
 type Props = {
   children: React.ReactNode;
@@ -36,6 +37,7 @@ const Layout: React.FC<Props> = ({ children, font }) => {
       >
         <MainNav />
         <MonthSelector />
+        <LoadingSpinner />
         {children}
         <Map />
       </main>

@@ -20,7 +20,7 @@ const NavLink: React.FC<Props> = ({ children, path, pathMatches }) => {
     <Link
       href={path}
       className={classNames(
-        "text-sm transition-colors md:text-base",
+        "text-xs transition-colors sm:text-sm md:text-base",
         isActive ? " text-yellow-400" : "text-slate-400 hover:text-slate-200"
       )}
     >
@@ -40,14 +40,14 @@ const MainNav = () => {
           alt=""
           className="mr-3 hidden sm:block"
         />
-        <h1 className="mr-1 flex flex-col">
+        <h1 className="flex flex-col">
           <span className="text-md font-bold leading-none">Helsinki </span>
           <span className="text-sm leading-none tracking-tight">
             City Bikes
           </span>
         </h1>
       </div>
-      <nav className="flex h-12 items-center gap-4 rounded-r-lg border border-yellow-400 bg-slate-900 bg-opacity-70 py-3 px-5 backdrop-blur-lg">
+      <nav className="flex h-12 items-center gap-3 rounded-r-lg border border-yellow-400 bg-slate-900 bg-opacity-70 py-3 px-5 backdrop-blur-lg md:gap-4">
         <NavLink path="/" pathMatches={["/", "/stations/[stationId]"]}>
           Stations
         </NavLink>
