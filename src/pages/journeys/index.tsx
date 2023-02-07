@@ -1,13 +1,13 @@
 import Head from "next/head";
 import classNames from "classnames";
 import { atom, useAtom } from "jotai";
-import { formatDistance, formatDateTime, formatDuration } from "@utils/general";
-import { mapHoverAtom } from "@components/Map/Map";
+import useJourneys, { JOURNEY_COUNT } from "@hooks/useJourneys";
 import type { NextPage } from "next";
 
 import SidePanel from "@components/SidePanel";
+import JourneyRow from "@components/JourneyRow";
+import JourneyRowSkeleton from "@components/JourneyRowsSkeleton";
 import { ArrowLeft, ArrowRight, SortDown, SortUp } from "@components/Icons";
-import useJourneys from "@hooks/useJourneys";
 
 type OrderByOptions = "departureTime" | "duration" | "distance";
 type SortOrderOptions = "asc" | "desc";
@@ -20,9 +20,8 @@ const Station: NextPage = () => {
   const [currentOrderBy, setCurrentOrderBy] = useAtom(orderByAtom);
   const [sortOrder, setSortOrder] = useAtom(sortOrderAtom);
   const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
-  const [, setHoverId] = useAtom(mapHoverAtom);
 
-  const { journeys, fetchNextPage, fetchPreviousPage, hasNextPage } =
+  const { journeys, fetchNextPage, fetchPreviousPage, hasNextPage, status } =
     useJourneys();
 
   const handleFetchNextPage = async () => {
@@ -116,24 +115,14 @@ const Station: NextPage = () => {
             </tr>
           </thead>
           <tbody className="text-sm">
-            {filteredJourneys?.map((journey) => (
-              <tr
-                key={journey.id}
-                onMouseEnter={() => setHoverId(journey.id)}
-                onMouseLeave={() => setHoverId(null)}
-                className="hover:cursor-pointer hover:bg-yellow-500/20"
-              >
-                <td className="whitespace-nowrap">
-                  <span>{formatDateTime(journey.departureTime)}</span>
-                </td>
-                <td className="w-2/3 text-right">
-                  <span>{formatDuration(journey.duration)}</span>
-                </td>
-                <td className="w-1/3 text-right">
-                  <span>{formatDistance(journey.distance)}</span>
-                </td>
-              </tr>
-            ))}
+            {status === "loading" &&
+              [...Array(JOURNEY_COUNT)].map((_, index) => (
+                <JourneyRowSkeleton key={index} index={index} />
+              ))}
+            {status === "success" &&
+              filteredJourneys?.map((journey) => (
+                <JourneyRow key={journey.id} journey={journey} />
+              ))}
           </tbody>
         </table>
 

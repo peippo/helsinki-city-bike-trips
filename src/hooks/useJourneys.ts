@@ -8,6 +8,8 @@ import { selectedMonthAtom } from "@components/MonthSelector";
 // Redundant hook, figure out why accessing the cached getBatch query data
 // does not work via TRPC's useContext & getInfiniteData helper
 
+export const JOURNEY_COUNT = 30;
+
 const useJourneys = () => {
   const router = useRouter();
   const [selectedMonth] = useAtom(selectedMonthAtom);
@@ -19,9 +21,10 @@ const useJourneys = () => {
     fetchNextPage,
     fetchPreviousPage,
     hasNextPage,
+    status,
   } = trpc.journey.getBatch.useInfiniteQuery(
     {
-      limit: 30,
+      limit: JOURNEY_COUNT,
       orderBy: orderBy,
       sortOrder: sortOrder,
       month: selectedMonth,
@@ -32,7 +35,7 @@ const useJourneys = () => {
     }
   );
 
-  return { journeys, fetchNextPage, fetchPreviousPage, hasNextPage };
+  return { journeys, fetchNextPage, fetchPreviousPage, hasNextPage, status };
 };
 
 export default useJourneys;
