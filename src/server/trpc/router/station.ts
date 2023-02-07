@@ -21,7 +21,7 @@ export const stationRouter = router({
             ...whereDepartureTimeIs(month),
           },
           arrivals: {
-            ...whereDepartureTimeIs(month),
+            ...whereReturnTimeIs(month),
           },
         },
       });
@@ -41,7 +41,7 @@ export const stationRouter = router({
                 ...whereDepartureTimeIs(month),
               },
               arrivals: {
-                ...whereDepartureTimeIs(month),
+                ...whereReturnTimeIs(month),
               },
             },
           },
@@ -54,6 +54,17 @@ const whereDepartureTimeIs = (month: number) => {
   return {
     where: {
       departureTime: {
+        gte: new Date(`2021-${month}`),
+        lte: new Date(`2021-${month + 1}`),
+      },
+    },
+  };
+};
+
+const whereReturnTimeIs = (month: number) => {
+  return {
+    where: {
+      returnTime: {
         gte: new Date(`2021-${month}`),
         lte: new Date(`2021-${month + 1}`),
       },
