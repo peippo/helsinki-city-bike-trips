@@ -14,6 +14,12 @@ const StationId = Prisma.validator<Prisma.StationArgs>()({
 type StationTraffic = Prisma.StationGetPayload<typeof StationId> &
   Prisma.StationGetPayload<typeof StationTrafficCounts> & { name?: string };
 
+const StationJourneys = Prisma.validator<Prisma.StationArgs>()({
+  include: { departures: true, arrivals: true },
+});
+
+type StationJourneys = Prisma.StationGetPayload<typeof StationJourneys>;
+
 type TrafficData = {
   arrival: {
     stations: StationsJourneyData[];

@@ -52,6 +52,13 @@ describe("Stations", async () => {
     await expect(page.locator(".sidepanel")).toContainText("No stations found");
   });
 
+  test("shows error message for unknown station ids", async () => {
+    await page.goto("http://localhost:3000/stations/9999");
+    await expect(page.locator(".sidepanel")).toContainText(
+      "Unable to find station"
+    );
+  });
+
   test("stations details should show top arrival & departure stations", async () => {
     await page.goto("http://localhost:3000/stations/1");
     await expect(page.locator(".sidepanel ul > li:first-child")).toContainText(

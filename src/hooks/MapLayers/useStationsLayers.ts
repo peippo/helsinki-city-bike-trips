@@ -2,7 +2,7 @@ import { trpc } from "@utils/trpc";
 import { useRouter } from "next/router";
 import { useAtom } from "jotai";
 import { IconLayer, ArcLayer } from "@deck.gl/layers/typed";
-import { trafficModeAtom } from "@pages/stations/[stationId]";
+import { trafficModeAtom } from "@components/StationDetails";
 import { hoverInfoAtom, mapHoverAtom } from "@components/Map/Map";
 import useSingleStation from "@hooks/useSingleStation";
 import type { Station } from "@prisma/client";
