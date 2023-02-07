@@ -22,6 +22,7 @@ const useJourneys = () => {
     fetchPreviousPage,
     hasNextPage,
     status,
+    isFetchingNextPage,
   } = trpc.journey.getBatch.useInfiniteQuery(
     {
       limit: JOURNEY_COUNT,
@@ -35,7 +36,14 @@ const useJourneys = () => {
     }
   );
 
-  return { journeys, fetchNextPage, fetchPreviousPage, hasNextPage, status };
+  return {
+    journeys,
+    fetchNextPage,
+    fetchPreviousPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+  };
 };
 
 export default useJourneys;

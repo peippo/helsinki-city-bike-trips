@@ -21,8 +21,14 @@ const Station: NextPage = () => {
   const [sortOrder, setSortOrder] = useAtom(sortOrderAtom);
   const [currentPage, setCurrentPage] = useAtom(currentPageAtom);
 
-  const { journeys, fetchNextPage, fetchPreviousPage, hasNextPage, status } =
-    useJourneys();
+  const {
+    journeys,
+    fetchNextPage,
+    fetchPreviousPage,
+    hasNextPage,
+    status,
+    isFetchingNextPage,
+  } = useJourneys();
 
   const handleFetchNextPage = async () => {
     await fetchNextPage();
@@ -115,11 +121,12 @@ const Station: NextPage = () => {
             </tr>
           </thead>
           <tbody className="text-sm">
-            {status === "loading" &&
+            {(status === "loading" || isFetchingNextPage) &&
               [...Array(JOURNEY_COUNT)].map((_, index) => (
                 <JourneyRowSkeleton key={index} index={index} />
               ))}
             {status === "success" &&
+              !isFetchingNextPage &&
               filteredJourneys?.map((journey) => (
                 <JourneyRow key={journey.id} journey={journey} />
               ))}
